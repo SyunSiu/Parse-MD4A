@@ -52,7 +52,7 @@ public class MD360Program {
     }
 
     protected String getVertexShader(Context context){
-        return readTextFileFromRaw(context, R.raw.per_pixel_vertex_shader);
+        return readTextFileFromRaw(context, R.raw.vertex_shader);
     }
 
     protected String getFragmentShader(Context context){
@@ -89,11 +89,11 @@ public class MD360Program {
             int resId;
             switch (type){
                 case MDVRLibrary.ContentType.BITMAP:
-                    resId = R.raw.per_pixel_fragment_shader_bitmap;
+                    resId = R.raw.fragment_shader_bitmap;
                     break;
                 case MDVRLibrary.ContentType.VIDEO:
                 default:
-                    resId = R.raw.per_pixel_fragment_shader;
+                    resId = R.raw.fragment_shader_video;
                     break;
             }
             return readTextFileFromRaw(context, resId);
