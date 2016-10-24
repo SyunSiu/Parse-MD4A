@@ -114,8 +114,8 @@ public abstract class MD360PlayerActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-//        setContentView(R.layout.activity_md_using_surface_view);
-        setContentView(R.layout.activity_md_using_texture_view);
+        setContentView(R.layout.activity_md_using_surface_view);
+//        setContentView(R.layout.activity_md_using_texture_view);
 
 
         /**
