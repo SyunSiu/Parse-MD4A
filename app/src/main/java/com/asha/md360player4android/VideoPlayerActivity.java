@@ -1,5 +1,6 @@
 package com.asha.md360player4android;
 
+
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.net.Uri;
@@ -15,7 +16,7 @@ import android.widget.Toast;
 import com.asha.md360player4android.utils.Llog;
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.model.BarrelDistortionConfig;
 import com.asha.vrlib.model.MDPinchConfig;
 
@@ -28,15 +29,15 @@ import java.nio.ByteBuffer;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
+
 /**
- * Created by hzqiujiadi on 16/4/5.
- * hzqiujiadi ashqalcn@gmail.com
+ * 播放视频
  */
 public class VideoPlayerActivity extends MD360PlayerActivity {
 
 
-    private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
     private boolean playFrame;
+    private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
 
 
     @Override
@@ -102,15 +103,15 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
 
     }
 
+
     @Override
-    protected MDVRLibrary createVRLibrary() {
-        return MDVRLibrary.with(this)
-                .displayMode(MDVRLibrary.DISPLAY_MODE_NORMAL)
-                .interactiveMode(MDVRLibrary.INTERACTIVE_MODE_MOTION)
-                .asVideo(new MDVRLibrary.IOnSurfaceReadyCallback() {
+    protected FishLibrary createVRLibrary() {
+        return FishLibrary.with(this)
+                .displayMode(FishLibrary.DISPLAY_MODE_NORMAL)
+                .interactiveMode(FishLibrary.INTERACTIVE_MODE_MOTION)
+                .asVideo(new FishLibrary.IOnSurfaceReadyCallback() {
                     @Override
                     public void onSurfaceReady(Surface surface) {
-
                         Llog.debug("surfaceReady， 开始setSurface");
                         if (playFrame) {
                             // TODO: 2016/10/18  测试裸数据
@@ -121,10 +122,10 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
 
                     }
                 })
-                .ifNotSupport(new MDVRLibrary.INotSupportCallback() {
+                .ifNotSupport(new FishLibrary.INotSupportCallback() {
                     @Override
                     public void onNotSupport(int mode) {
-                        String tip = mode == MDVRLibrary.INTERACTIVE_MODE_MOTION
+                        String tip = mode == FishLibrary.INTERACTIVE_MODE_MOTION
                                 ? "onNotSupport:MOTION" : "onNotSupport:" + String.valueOf(mode);
                         Toast.makeText(VideoPlayerActivity.this, tip, Toast.LENGTH_SHORT).show();
                     }

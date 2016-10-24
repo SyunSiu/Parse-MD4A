@@ -6,7 +6,7 @@ import android.opengl.GLES20;
 import android.view.Surface;
 
 import com.asha.vrlib.MD360Program;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -20,9 +20,9 @@ public class MD360VideoTexture extends MD360Texture {
 
     private Surface mSurface;
     private SurfaceTexture mSurfaceTexture;
-    private MDVRLibrary.IOnSurfaceReadyCallback mOnSurfaceReadyListener;
+    private FishLibrary.IOnSurfaceReadyCallback mOnSurfaceReadyListener;
 
-    public MD360VideoTexture(MDVRLibrary.IOnSurfaceReadyCallback onSurfaceReadyListener) {
+    public MD360VideoTexture(FishLibrary.IOnSurfaceReadyCallback onSurfaceReadyListener) {
         mOnSurfaceReadyListener = onSurfaceReadyListener;
     }
 

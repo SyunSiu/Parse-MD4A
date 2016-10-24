@@ -5,7 +5,7 @@ import android.graphics.RectF;
 
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.MDDirection;
 import com.asha.vrlib.common.MDGLHandler;
 import com.asha.vrlib.model.MDMainPluginBuilder;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> implements IProjectionMode {
 
-    public static int[] sModes = {MDVRLibrary.PROJECTION_MODE_SPHERE, MDVRLibrary.PROJECTION_MODE_DOME180, MDVRLibrary.PROJECTION_MODE_DOME230};
+    public static int[] sModes = {FishLibrary.PROJECTION_MODE_SPHERE, FishLibrary.PROJECTION_MODE_DOME180, FishLibrary.PROJECTION_MODE_DOME230};
 
     public static class Params{
         public RectF textureSize;
@@ -80,7 +80,7 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
         MD360DirectorFactory factory = getStrategy().hijackDirectorFactory();
         factory = factory == null ? mCustomDirectorFactory : factory;
 
-        for (int i = 0; i < MDVRLibrary.sMultiScreenSize; i++){
+        for (int i = 0; i < FishLibrary.sMultiScreenSize; i++){
             mDirectors.add(factory.createDirector(i));
         }
     }
@@ -93,28 +93,28 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
         }
         
         switch (mode){
-            case MDVRLibrary.PROJECTION_MODE_DOME180:
+            case FishLibrary.PROJECTION_MODE_DOME180:
                 return new DomeProjection(this.mTextureSize,180f,false);
-            case MDVRLibrary.PROJECTION_MODE_DOME230:
+            case FishLibrary.PROJECTION_MODE_DOME230:
                 return new DomeProjection(this.mTextureSize,230f,false);
-            case MDVRLibrary.PROJECTION_MODE_DOME180_UPPER:
+            case FishLibrary.PROJECTION_MODE_DOME180_UPPER:
                 return new DomeProjection(this.mTextureSize,180f,true);
-            case MDVRLibrary.PROJECTION_MODE_DOME230_UPPER:
+            case FishLibrary.PROJECTION_MODE_DOME230_UPPER:
                 return new DomeProjection(this.mTextureSize,230f,true);
-            case MDVRLibrary.PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL:
+            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL:
                 return new StereoSphereProjection(MDDirection.HORIZONTAL);
-            case MDVRLibrary.PROJECTION_MODE_STEREO_SPHERE:
-            case MDVRLibrary.PROJECTION_MODE_STEREO_SPHERE_VERTICAL:
+            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE:
+            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE_VERTICAL:
                 return new StereoSphereProjection(MDDirection.VERTICAL);
-            case MDVRLibrary.PROJECTION_MODE_PLANE_FIT:
-            case MDVRLibrary.PROJECTION_MODE_PLANE_CROP:
-            case MDVRLibrary.PROJECTION_MODE_PLANE_FULL:
+            case FishLibrary.PROJECTION_MODE_PLANE_FIT:
+            case FishLibrary.PROJECTION_MODE_PLANE_CROP:
+            case FishLibrary.PROJECTION_MODE_PLANE_FULL:
                 return PlaneProjection.create(mode,this.mTextureSize);
-            case MDVRLibrary.PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL:
+            case FishLibrary.PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL:
                 return new MultiFishEyeProjection(1f, MDDirection.HORIZONTAL);
-            case MDVRLibrary.PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL:
+            case FishLibrary.PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL:
                 return new MultiFishEyeProjection(1f, MDDirection.VERTICAL);
-            case MDVRLibrary.PROJECTION_MODE_SPHERE:
+            case FishLibrary.PROJECTION_MODE_SPHERE:
             default:
                 return new SphereProjection();
         }

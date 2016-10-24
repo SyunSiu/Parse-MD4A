@@ -2,7 +2,7 @@ package com.asha.vrlib.model;
 
 import android.util.SparseArray;
 
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.texture.MD360BitmapTexture;
 import com.asha.vrlib.texture.MD360Texture;
 
@@ -18,7 +18,7 @@ public class MDHotspotBuilder {
 
     public String title;
 
-    public MDVRLibrary.ITouchPickListener clickListener;
+    public FishLibrary.ITouchPickListener clickListener;
 
     public MDPosition position;
 
@@ -69,12 +69,12 @@ public class MDHotspotBuilder {
         return this;
     }
 
-    public MDHotspotBuilder provider(MDVRLibrary.IBitmapProvider provider){
+    public MDHotspotBuilder provider(FishLibrary.IBitmapProvider provider){
         provider(0,provider);
         return this;
     }
 
-    public MDHotspotBuilder provider(int key, MDVRLibrary.IBitmapProvider provider){
+    public MDHotspotBuilder provider(int key, FishLibrary.IBitmapProvider provider){
         textures.append(key,new MD360BitmapTexture(provider));
         return this;
     }
@@ -84,7 +84,7 @@ public class MDHotspotBuilder {
         return this;
     }
 
-    public MDHotspotBuilder listenClick(MDVRLibrary.ITouchPickListener listener){
+    public MDHotspotBuilder listenClick(FishLibrary.ITouchPickListener listener){
         this.clickListener = listener;
         return this;
     }

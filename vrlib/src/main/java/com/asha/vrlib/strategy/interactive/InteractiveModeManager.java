@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorEventListener;
 
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.MDGLHandler;
 import com.asha.vrlib.strategy.ModeManager;
 import com.asha.vrlib.strategy.projection.ProjectionModeManager;
@@ -17,9 +17,9 @@ public class InteractiveModeManager extends ModeManager<AbsInteractiveStrategy> 
 
     private boolean mIsResumed;
 
-    private static int[] sModes = {MDVRLibrary.INTERACTIVE_MODE_MOTION,
-            MDVRLibrary.INTERACTIVE_MODE_TOUCH,
-            MDVRLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH,
+    private static int[] sModes = {FishLibrary.INTERACTIVE_MODE_MOTION,
+            FishLibrary.INTERACTIVE_MODE_TOUCH,
+            FishLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH,
     };
 
     public static class Params{
@@ -45,11 +45,11 @@ public class InteractiveModeManager extends ModeManager<AbsInteractiveStrategy> 
     @Override
     protected AbsInteractiveStrategy createStrategy(int mode) {
         switch (mode){
-            case MDVRLibrary.INTERACTIVE_MODE_MOTION:
+            case FishLibrary.INTERACTIVE_MODE_MOTION:
                 return new MotionStrategy(mParams);
-            case MDVRLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH:
+            case FishLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH:
                 return new MotionWithTouchStrategy(mParams);
-            case MDVRLibrary.INTERACTIVE_MODE_TOUCH:
+            case FishLibrary.INTERACTIVE_MODE_TOUCH:
             default:
                 return new TouchStrategy(mParams);
         }

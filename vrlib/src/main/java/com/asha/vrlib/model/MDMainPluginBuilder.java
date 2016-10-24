@@ -1,6 +1,6 @@
 package com.asha.vrlib.model;
 
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.strategy.projection.ProjectionModeManager;
 import com.asha.vrlib.texture.MD360Texture;
 
@@ -10,7 +10,7 @@ import com.asha.vrlib.texture.MD360Texture;
  */
 public class MDMainPluginBuilder {
     private MD360Texture texture;
-    private int contentType = MDVRLibrary.ContentType.DEFAULT;
+    private int contentType = FishLibrary.ContentType.DEFAULT;
     private ProjectionModeManager projectionModeManager;
 
     public MDMainPluginBuilder() {

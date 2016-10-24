@@ -2,7 +2,7 @@ package com.asha.vrlib.strategy;
 
 import android.app.Activity;
 
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.MDGLHandler;
 import com.asha.vrlib.common.MDMainHandler;
 
@@ -15,7 +15,7 @@ import java.util.Arrays;
 public abstract class ModeManager<T extends IModeStrategy> {
     private int mMode;
     private T mStrategy;
-    private MDVRLibrary.INotSupportCallback mCallback;
+    private FishLibrary.INotSupportCallback mCallback;
     private MDGLHandler mGLHandler;
 
     public ModeManager(int mode, MDGLHandler handler) {
@@ -27,7 +27,7 @@ public abstract class ModeManager<T extends IModeStrategy> {
      * must call after new instance
      * @param activity activity
      */
-    public void prepare(Activity activity, MDVRLibrary.INotSupportCallback callback){
+    public void prepare(Activity activity, FishLibrary.INotSupportCallback callback){
         mCallback = callback;
         initMode(activity,mMode);
     }

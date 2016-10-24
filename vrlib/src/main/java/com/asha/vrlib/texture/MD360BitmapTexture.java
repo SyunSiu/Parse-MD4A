@@ -5,7 +5,7 @@ import android.opengl.GLES20;
 import android.opengl.GLUtils;
 
 import com.asha.vrlib.MD360Program;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.MDMainHandler;
 
 import java.util.Collection;
@@ -22,12 +22,12 @@ import static com.asha.vrlib.common.VRUtil.notNull;
 public class MD360BitmapTexture extends MD360Texture {
 
     private static final String TAG = "MD360BitmapTexture";
-    private MDVRLibrary.IBitmapProvider mBitmapProvider;
+    private FishLibrary.IBitmapProvider mBitmapProvider;
     private Map<String,AsyncCallback> mCallbackList = new HashMap<>();
     private boolean mIsReady;
     private AsyncCallback callback;
 
-    public MD360BitmapTexture(MDVRLibrary.IBitmapProvider bitmapProvider) {
+    public MD360BitmapTexture(FishLibrary.IBitmapProvider bitmapProvider) {
         this.mBitmapProvider = bitmapProvider;
     }
 

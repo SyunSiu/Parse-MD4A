@@ -6,7 +6,7 @@ import android.opengl.GLES20;
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360DirectorFactory;
 import com.asha.vrlib.MD360Program;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.MDDirection;
 import com.asha.vrlib.model.MDMainPluginBuilder;
 import com.asha.vrlib.model.MDPosition;
@@ -45,7 +45,7 @@ public class MDMultiFishEyePlugin extends MDAbsPlugin {
     public MDMultiFishEyePlugin(MDMainPluginBuilder builder, float radius, MDDirection direction) {
         mTexture = builder.getTexture();
         mProgram = new MD360Program(builder.getContentType());
-        mBitmapProgram = new MD360Program(MDVRLibrary.ContentType.BITMAP);
+        mBitmapProgram = new MD360Program(FishLibrary.ContentType.BITMAP);
 
         mProjectionModeManager = builder.getProjectionModeManager();
 

@@ -1,5 +1,6 @@
 package com.asha.md360player4android;
 
+
 import android.content.ContentResolver;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -12,15 +13,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 /**
- * Created by hzqiujiadi on 16/1/26.
- * hzqiujiadi ashqalcn@gmail.com
+ * 默认的主界面
  */
-public class DemoActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_demo);
+        setContentView(R.layout.activity_main);
+
 
         final EditText et = (EditText) findViewById(R.id.edit_text_url);
 
@@ -79,14 +83,18 @@ public class DemoActivity extends AppCompatActivity {
                 })
                 .init(R.id.spinner_url);
 
+
+        /**
+         * 播放视频
+         */
         findViewById(R.id.video_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String url = et.getText().toString();
                 if (!TextUtils.isEmpty(url)) {
-                    MD360PlayerActivity.startVideo(DemoActivity.this, Uri.parse(url));
+                    MD360PlayerActivity.startVideo(MainActivity.this, Uri.parse(url));
                 } else {
-                    Toast.makeText(DemoActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -96,9 +104,9 @@ public class DemoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String url = et.getText().toString();
                 if (!TextUtils.isEmpty(url)) {
-                    MD360PlayerActivity.startBitmap(DemoActivity.this, Uri.parse(url));
+                    MD360PlayerActivity.startBitmap(MainActivity.this, Uri.parse(url));
                 } else {
-                    Toast.makeText(DemoActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -108,14 +116,18 @@ public class DemoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String url = et.getText().toString();
                 if (!TextUtils.isEmpty(url)) {
-                    IjkPlayerDemoActivity.start(DemoActivity.this, Uri.parse(url));
+                    IjkPlayerDemoActivity.start(MainActivity.this, Uri.parse(url));
                 } else {
-                    Toast.makeText(DemoActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
+
+    /**
+     * 根据 资源文件id 获得文件的uri
+     */
     private Uri getDrawableUri(@DrawableRes int resId) {
         Resources resources = getResources();
         return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + resources.getResourcePackageName(resId) + '/' + resources.getResourceTypeName(resId) + '/' + resources.getResourceEntryName(resId));

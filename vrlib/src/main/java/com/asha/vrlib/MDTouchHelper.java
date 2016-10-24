@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class MDTouchHelper {
 
-    private MDVRLibrary.IAdvanceGestureListener mAdvanceGestureListener;
-    private List<MDVRLibrary.IGestureListener> mClickListeners = new LinkedList<>();
+    private FishLibrary.IAdvanceGestureListener mAdvanceGestureListener;
+    private List<FishLibrary.IGestureListener> mClickListeners = new LinkedList<>();
     private GestureDetector mGestureDetector;
     private int mCurrentMode = 0;
     private PinchInfo mPinchInfo = new PinchInfo();
@@ -39,7 +39,7 @@ public class MDTouchHelper {
             public boolean onSingleTapConfirmed(MotionEvent e) {
                 if (mCurrentMode == MODE_PINCH) return false;
 
-                for (MDVRLibrary.IGestureListener listener : mClickListeners){
+                for (FishLibrary.IGestureListener listener : mClickListeners){
                     listener.onClick(e);
                 }
                 return true;
@@ -124,11 +124,11 @@ public class MDTouchHelper {
         return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
     }
 
-    public void addClickListener(MDVRLibrary.IGestureListener gestureListener) {
+    public void addClickListener(FishLibrary.IGestureListener gestureListener) {
         if (gestureListener != null) mClickListeners.add(gestureListener);
     }
 
-    public void setAdvanceGestureListener(MDVRLibrary.IAdvanceGestureListener listener) {
+    public void setAdvanceGestureListener(FishLibrary.IAdvanceGestureListener listener) {
         this.mAdvanceGestureListener = listener;
     }
 

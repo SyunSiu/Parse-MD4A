@@ -7,7 +7,7 @@ import android.opengl.GLES20;
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360DirectorFactory;
 import com.asha.vrlib.MD360Program;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.VRUtil;
 import com.asha.vrlib.model.BarrelDistortionConfig;
 import com.asha.vrlib.objects.MDAbsObject3D;
@@ -49,7 +49,7 @@ public class MDBarrelDistortionLinePipe extends MDAbsLinePipe {
     public MDBarrelDistortionLinePipe(DisplayModeManager displayModeManager) {
         mDisplayModeManager = displayModeManager;
         mConfiguration = displayModeManager.getBarrelDistortionConfig();
-        mProgram = new MD360Program(MDVRLibrary.ContentType.BITMAP);
+        mProgram = new MD360Program(FishLibrary.ContentType.BITMAP);
         mDirector = new MD360DirectorFactory.OrthogonalImpl().createDirector(0);
         object3D = new MDBarrelDistortionMesh();
         mDrawingCache = new MDDrawingCache();

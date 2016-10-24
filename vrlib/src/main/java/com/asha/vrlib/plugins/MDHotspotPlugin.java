@@ -7,7 +7,7 @@ import android.util.SparseArray;
 
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360Program;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.common.VRUtil;
 import com.asha.vrlib.model.MDHotspotBuilder;
 import com.asha.vrlib.model.MDPosition;
@@ -32,7 +32,7 @@ public class MDHotspotPlugin extends MDAbsPlugin implements IMDHotspot{
 
     private static final String TAG = "MDSimplePlugin";
 
-    private MDVRLibrary.ITouchPickListener clickListener;
+    private FishLibrary.ITouchPickListener clickListener;
 
     private MDAbsObject3D object3D;
 
@@ -57,7 +57,7 @@ public class MDHotspotPlugin extends MDAbsPlugin implements IMDHotspot{
     @Override
     public void init(Context context) {
 
-        program = new MD360Program(MDVRLibrary.ContentType.BITMAP);
+        program = new MD360Program(FishLibrary.ContentType.BITMAP);
         program.build(context);
 
         for (int i = 0; i < textures.size(); i++) {

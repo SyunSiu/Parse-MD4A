@@ -1,5 +1,6 @@
 package com.asha.vrlib;
 
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.RectF;
@@ -36,23 +37,29 @@ import java.util.List;
 
 import static com.asha.vrlib.common.VRUtil.notNull;
 
-/**
- * Created by hzqiujiadi on 16/3/12.
- * hzqiujiadi ashqalcn@gmail.com
- */
-public class MDVRLibrary {
 
-    private static final String TAG = "MDVRLibrary";
+/**
+ * Fish 库
+ */
+public class FishLibrary {
+
+
+    private static final String TAG = "FishLib";
+
+
     public static final int sMultiScreenSize = 2;
+
 
     // interactive mode
     public static final int INTERACTIVE_MODE_MOTION = 1;
     public static final int INTERACTIVE_MODE_TOUCH = 2;
     public static final int INTERACTIVE_MODE_MOTION_WITH_TOUCH = 3;
 
+
     // display mode
     public static final int DISPLAY_MODE_NORMAL = 101;
     public static final int DISPLAY_MODE_GLASS = 102;
+
 
     // projection mode
     public static final int PROJECTION_MODE_SPHERE = 201;
@@ -60,11 +67,14 @@ public class MDVRLibrary {
     public static final int PROJECTION_MODE_DOME230 = 203;
     public static final int PROJECTION_MODE_DOME180_UPPER = 204;
     public static final int PROJECTION_MODE_DOME230_UPPER = 205;
+
+
     /**
      * @deprecated since 2.0.4
      * use {@link #PROJECTION_MODE_STEREO_SPHERE_VERTICAL}
      */
-    @Deprecated public static final int PROJECTION_MODE_STEREO_SPHERE = 206;
+    @Deprecated
+    public static final int PROJECTION_MODE_STEREO_SPHERE = 206;
     public static final int PROJECTION_MODE_PLANE_FIT = 207;
     public static final int PROJECTION_MODE_PLANE_CROP = 208;
     public static final int PROJECTION_MODE_PLANE_FULL = 209;
@@ -73,8 +83,9 @@ public class MDVRLibrary {
     public static final int PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL = 212;
     public static final int PROJECTION_MODE_STEREO_SPHERE_VERTICAL = 213;
 
+
     // private int mDisplayMode = DISPLAY_MODE_NORMAL;
-    private RectF mTextureSize = new RectF(0,0,1024,1024);
+    private RectF mTextureSize = new RectF(0, 0, 1024, 1024);
     private InteractiveModeManager mInteractiveModeManager;
     private DisplayModeManager mDisplayModeManager;
     private ProjectionModeManager mProjectionModeManager;
@@ -85,7 +96,8 @@ public class MDVRLibrary {
     private MD360Texture mTexture;
     private MDGLHandler mGLHandler;
 
-    private MDVRLibrary(Builder builder) {
+
+    private FishLibrary(Builder builder) {
 
         // init main handler
         MDMainHandler.init();
@@ -110,7 +122,7 @@ public class MDVRLibrary {
         mTouchHelper.setAdvanceGestureListener(new IAdvanceGestureListener() {
             @Override
             public void onDrag(float distanceX, float distanceY) {
-                mInteractiveModeManager.handleDrag((int) distanceX,(int) distanceY);
+                mInteractiveModeManager.handleDrag((int) distanceX, (int) distanceY);
             }
 
             @Override
@@ -132,7 +144,8 @@ public class MDVRLibrary {
         initPickerManager(builder);
     }
 
-    private class UpdatePinchRunnable implements Runnable{
+
+    private class UpdatePinchRunnable implements Runnable {
         private float scale;
 
         public void setScale(float scale) {
@@ -142,11 +155,12 @@ public class MDVRLibrary {
         @Override
         public void run() {
             List<MD360Director> directors = mProjectionModeManager.getDirectors();
-            for (MD360Director director : directors){
+            for (MD360Director director : directors) {
                 director.updateProjectionNearScale(scale);
             }
         }
     }
+
 
     private void initModeManager(Builder builder) {
 
@@ -177,9 +191,11 @@ public class MDVRLibrary {
         mInteractiveModeManager.prepare(builder.activity, builder.notSupportCallback);
     }
 
+
     private void initPluginManager(Builder builder) {
         mPluginManager = new MDPluginManager();
     }
+
 
     private void initPickerManager(Builder builder) {
         mPickerManager = MDPickerManager.with()
@@ -195,6 +211,7 @@ public class MDVRLibrary {
         mTouchHelper.addClickListener(mPickerManager.getTouchPicker());
         mPluginManager.add(mPickerManager.getEyePicker());
     }
+
 
     private void initOpenGL(Context context, MDGLScreenWrapper screenWrapper) {
         if (GLUtil.supportsEs2(context)) {
@@ -217,121 +234,141 @@ public class MDVRLibrary {
         }
     }
 
+
     public void switchInteractiveMode(final Activity activity) {
         mInteractiveModeManager.switchMode(activity);
     }
+
 
     /**
      * Switch Interactive Mode
      *
      * @param activity activity
-     * @param mode mode
-     *
-     * {@link #INTERACTIVE_MODE_MOTION}
-     * {@link #INTERACTIVE_MODE_TOUCH}
-     * {@link #INTERACTIVE_MODE_MOTION_WITH_TOUCH}
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #INTERACTIVE_MODE_MOTION}
+     *                 {@link #INTERACTIVE_MODE_TOUCH}
+     *                 {@link #INTERACTIVE_MODE_MOTION_WITH_TOUCH}
      */
-    public void switchInteractiveMode(final Activity activity, final int mode){
+    public void switchInteractiveMode(final Activity activity, final int mode) {
         mInteractiveModeManager.switchMode(activity, mode);
     }
 
-    public void switchDisplayMode(final Activity activity){
+
+    public void switchDisplayMode(final Activity activity) {
         mDisplayModeManager.switchMode(activity);
     }
+
 
     /**
      * Switch Display Mode
      *
      * @param activity activity
-     * @param mode mode
-     *
-     * {@link #DISPLAY_MODE_GLASS}
-     * {@link #DISPLAY_MODE_NORMAL}
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #DISPLAY_MODE_GLASS}
+     *                 {@link #DISPLAY_MODE_NORMAL}
      */
-    public void switchDisplayMode(final Activity activity, final int mode){
+    public void switchDisplayMode(final Activity activity, final int mode) {
         mDisplayModeManager.switchMode(activity, mode);
     }
+
 
     /**
      * Switch Projection Mode
      *
      * @param activity activity
-     * @param mode mode
-     *
-     * {@link #PROJECTION_MODE_SPHERE}
-     * {@link #PROJECTION_MODE_DOME180}
-     * and so on.
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #PROJECTION_MODE_SPHERE}
+     *                 {@link #PROJECTION_MODE_DOME180}
+     *                 and so on.
      */
     public void switchProjectionMode(final Activity activity, final int mode) {
         mProjectionModeManager.switchMode(activity, mode);
     }
 
-    public void resetTouch(){
+
+    public void resetTouch() {
         mGLHandler.post(new Runnable() {
             @Override
             public void run() {
                 List<MD360Director> directors = mProjectionModeManager.getDirectors();
-                for (MD360Director director : directors){
+                for (MD360Director director : directors) {
                     director.reset();
                 }
             }
         });
     }
 
-    public void resetPinch(){
+
+    public void resetPinch() {
         mTouchHelper.reset();
     }
 
-    public void resetEyePick(){
+
+    public void resetEyePick() {
         mPickerManager.resetEyePick();
     }
 
-    public void setAntiDistortionEnabled(boolean enabled){
+
+    public void setAntiDistortionEnabled(boolean enabled) {
         mDisplayModeManager.setAntiDistortionEnabled(enabled);
     }
 
-    public boolean isAntiDistortionEnabled(){
+
+    public boolean isAntiDistortionEnabled() {
         return mDisplayModeManager.isAntiDistortionEnabled();
     }
+
 
     public boolean isEyePickEnable() {
         return mPickerManager.isEyePickEnable();
     }
 
+
     public void setEyePickEnable(boolean eyePickEnable) {
         mPickerManager.setEyePickEnable(eyePickEnable);
     }
 
-    public void setEyePickChangedListener(IEyePickListener listener){
+
+    public void setEyePickChangedListener(IEyePickListener listener) {
         mPickerManager.setEyePickChangedListener(listener);
     }
 
-    public void setTouchPickListener(ITouchPickListener listener){
+
+    public void setTouchPickListener(ITouchPickListener listener) {
         mPickerManager.setTouchPickListener(listener);
     }
 
-    public void setPinchScale(float scale){
+
+    public void setPinchScale(float scale) {
         mTouchHelper.scaleTo(scale);
     }
 
-    public int getScreenSize(){
+
+    public int getScreenSize() {
         return mDisplayModeManager.getVisibleSize();
     }
 
-    public void addPlugin(MDAbsPlugin plugin){
+
+    public void addPlugin(MDAbsPlugin plugin) {
         mPluginManager.add(plugin);
     }
 
-    public void removePlugin(MDAbsPlugin plugin){
+
+    public void removePlugin(MDAbsPlugin plugin) {
         mPluginManager.remove(plugin);
     }
 
-    public void removePlugins(){
+
+    public void removePlugins() {
         mPluginManager.removeAll();
     }
 
-    public void onTextureResize(float width, float height){
-        mTextureSize.set(0,0,width,height);
+
+    public void onTextureResize(float width, float height) {
+        mTextureSize.set(0, 0, width, height);
     }
 
 
@@ -339,21 +376,24 @@ public class MDVRLibrary {
         mInteractiveModeManager.onOrientationChanged(activity);
     }
 
-    public void onResume(Context context){
+
+    public void onResume(Context context) {
         mInteractiveModeManager.onResume(context);
-        if (mScreenWrapper != null){
+        if (mScreenWrapper != null) {
             mScreenWrapper.onResume();
         }
     }
 
-    public void onPause(Context context){
+
+    public void onPause(Context context) {
         mInteractiveModeManager.onPause(context);
-        if (mScreenWrapper != null){
+        if (mScreenWrapper != null) {
             mScreenWrapper.onPause();
         }
     }
 
-    public void onDestroy(){
+
+    public void onDestroy() {
         mGLHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -363,87 +403,103 @@ public class MDVRLibrary {
         mGLHandler.destroy();
     }
 
-    private void fireDestroy(){
+
+    private void fireDestroy() {
         Iterator<MDAbsPlugin> iterator = mPluginManager.getPlugins().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             MDAbsPlugin plugin = iterator.next();
             plugin.destroy();
         }
 
         MDAbsPlugin mainPlugin = mProjectionModeManager.getMainPlugin();
-        if (mainPlugin != null){
+        if (mainPlugin != null) {
             mainPlugin.destroy();
         }
 
-        if (mTexture != null){
+        if (mTexture != null) {
             mTexture.destroy();
             mTexture.release();
             mTexture = null;
         }
     }
 
+
     /**
      * handle touch touch to rotate the model
-     * @deprecated deprecated since 2.0
      *
      * @param event
      * @return true if handled.
+     * @deprecated deprecated since 2.0
      */
     public boolean handleTouchEvent(MotionEvent event) {
-        Log.e(TAG,"please remove the handleTouchEvent in activity!");
+        Log.e(TAG, "please remove the handleTouchEvent in activity!");
         return false;
     }
+
 
     public int getInteractiveMode() {
         return mInteractiveModeManager.getMode();
     }
 
-    public int getDisplayMode(){
+
+    public int getDisplayMode() {
         return mDisplayModeManager.getMode();
     }
 
-    public int getProjectionMode(){
+
+    public int getProjectionMode() {
         return mProjectionModeManager.getMode();
     }
 
-    public void notifyPlayerChanged(){
-        if (mTexture != null){
+
+    public void notifyPlayerChanged() {
+        if (mTexture != null) {
             mTexture.notifyChanged();
         }
     }
+
 
     public interface IOnSurfaceReadyCallback {
         void onSurfaceReady(Surface surface);
     }
 
+
     public interface IBitmapProvider {
         void onProvideBitmap(MD360BitmapTexture.Callback callback);
     }
 
-    public interface INotSupportCallback{
+
+    public interface INotSupportCallback {
         void onNotSupport(int mode);
     }
+
 
     public interface IGestureListener {
         void onClick(MotionEvent e);
     }
 
+
     interface IAdvanceGestureListener {
         void onDrag(float distanceX, float distanceY);
+
         void onPinch(float scale);
     }
+
 
     public interface IEyePickListener {
         void onHotspotHit(IMDHotspot hitHotspot, long hitTimestamp);
     }
 
+
     public interface ITouchPickListener {
         void onHotspotHit(IMDHotspot hitHotspot, MDRay ray);
     }
 
-    public static Builder with(Activity activity){
+
+    public static Builder with(Activity activity) {
         return new Builder(activity);
     }
+
 
     /**
      *
@@ -469,56 +525,65 @@ public class MDVRLibrary {
         private IMDProjectionFactory projectionFactory;
         private MDPinchConfig pinchConfig;
 
+
         private Builder(Activity activity) {
             this.activity = activity;
         }
 
-        public Builder displayMode(int displayMode){
+
+        public Builder displayMode(int displayMode) {
             this.displayMode = displayMode;
             return this;
         }
 
-        public Builder interactiveMode(int interactiveMode){
+
+        public Builder interactiveMode(int interactiveMode) {
             this.interactiveMode = interactiveMode;
             return this;
         }
 
-        public Builder projectionMode(int projectionMode){
+
+        public Builder projectionMode(int projectionMode) {
             this.projectionMode = projectionMode;
             return this;
         }
 
-        public Builder ifNotSupport(INotSupportCallback callback){
+
+        public Builder ifNotSupport(INotSupportCallback callback) {
             this.notSupportCallback = callback;
             return this;
         }
 
-        public Builder asVideo(IOnSurfaceReadyCallback callback){
+
+        public Builder asVideo(IOnSurfaceReadyCallback callback) {
             texture = new MD360VideoTexture(callback);
             contentType = ContentType.VIDEO;
             return this;
         }
 
-        public Builder asBitmap(IBitmapProvider bitmapProvider){
+
+        public Builder asBitmap(IBitmapProvider bitmapProvider) {
             notNull(bitmapProvider, "bitmap Provider can't be null!");
             texture = new MD360BitmapTexture(bitmapProvider);
             contentType = ContentType.BITMAP;
             return this;
         }
 
+
         /**
          * gesture listener, e.g.
          * onClick
-         * @deprecated please use {@link #listenGesture(IGestureListener)}
          *
          * @param listener listener
          * @return builder
+         * @deprecated please use {@link #listenGesture(IGestureListener)}
          */
         @Deprecated
         public Builder gesture(IGestureListener listener) {
             gestureListener = listener;
             return this;
         }
+
 
         /**
          * enable or disable the pinch gesture
@@ -531,6 +596,7 @@ public class MDVRLibrary {
             return this;
         }
 
+
         /**
          * enable or disable the eye picking.
          *
@@ -541,6 +607,7 @@ public class MDVRLibrary {
             this.eyePickEnabled = enabled;
             return this;
         }
+
 
         /**
          * gesture listener, e.g.
@@ -554,31 +621,34 @@ public class MDVRLibrary {
             return this;
         }
 
+
         /**
          * IPickListener listener
          *
          * @param listener listener
          * @return builder
          */
-        public Builder listenEyePick(IEyePickListener listener){
+        public Builder listenEyePick(IEyePickListener listener) {
             this.eyePickChangedListener = listener;
             return this;
         }
 
+
         /**
          * IPickListener listener
          *
          * @param listener listener
          * @return builder
          */
-        public Builder listenTouchPick(ITouchPickListener listener){
+        public Builder listenTouchPick(ITouchPickListener listener) {
             this.touchPickChangedListener = listener;
             return this;
         }
 
+
         /**
          * sensor delay in motion mode.
-         *
+         * <p>
          * {@link android.hardware.SensorManager#SENSOR_DELAY_FASTEST}
          * {@link android.hardware.SensorManager#SENSOR_DELAY_GAME}
          * {@link android.hardware.SensorManager#SENSOR_DELAY_NORMAL}
@@ -587,35 +657,41 @@ public class MDVRLibrary {
          * @param motionDelay default is {@link android.hardware.SensorManager#SENSOR_DELAY_GAME}
          * @return builder
          */
-        public Builder motionDelay(int motionDelay){
+        public Builder motionDelay(int motionDelay) {
             this.motionDelay = motionDelay;
             return this;
         }
 
-        public Builder sensorCallback(SensorEventListener callback){
+
+        public Builder sensorCallback(SensorEventListener callback) {
             this.sensorListener = callback;
             return this;
         }
 
-        public Builder directorFactory(MD360DirectorFactory directorFactory){
+
+        public Builder directorFactory(MD360DirectorFactory directorFactory) {
             this.directorFactory = directorFactory;
             return this;
         }
 
-        public Builder projectionFactory(IMDProjectionFactory projectionFactory){
+
+        public Builder projectionFactory(IMDProjectionFactory projectionFactory) {
             this.projectionFactory = projectionFactory;
             return this;
         }
 
-        public Builder barrelDistortionConfig(BarrelDistortionConfig config){
+
+        public Builder barrelDistortionConfig(BarrelDistortionConfig config) {
             this.barrelDistortionConfig = config;
             return this;
         }
 
-        public Builder pinchConfig(MDPinchConfig config){
+
+        public Builder pinchConfig(MDPinchConfig config) {
             this.pinchConfig = config;
             return this;
         }
+
 
         /**
          * build it!
@@ -624,36 +700,42 @@ public class MDVRLibrary {
          *                 or find the GLTextureView by glViewId
          * @return vr lib
          */
-        public MDVRLibrary build(int glViewId){
+        public FishLibrary build(int glViewId) {
             View view = activity.findViewById(glViewId);
-            if (view instanceof GLSurfaceView){
+            if (view instanceof GLSurfaceView) {
                 return build((GLSurfaceView) view);
-            } else if(view instanceof GLTextureView){
+            } else if (view instanceof GLTextureView) {
                 return build((GLTextureView) view);
             } else {
                 throw new RuntimeException("Please ensure the glViewId is instance of GLSurfaceView or GLTextureView");
             }
         }
 
-        public MDVRLibrary build(GLSurfaceView glSurfaceView){
+
+        public FishLibrary build(GLSurfaceView glSurfaceView) {
             return build(MDGLScreenWrapper.wrap(glSurfaceView));
         }
 
-        public MDVRLibrary build(GLTextureView glTextureView){
+
+        public FishLibrary build(GLTextureView glTextureView) {
             return build(MDGLScreenWrapper.wrap(glTextureView));
         }
 
-        private MDVRLibrary build(MDGLScreenWrapper screenWrapper){
-            notNull(texture,"You must call video/bitmap function before build");
-            if (this.directorFactory == null) directorFactory = new MD360DirectorFactory.DefaultImpl();
-            if (this.barrelDistortionConfig == null) barrelDistortionConfig = new BarrelDistortionConfig();
+
+        private FishLibrary build(MDGLScreenWrapper screenWrapper) {
+            notNull(texture, "You must call video/bitmap function before build");
+            if (this.directorFactory == null)
+                directorFactory = new MD360DirectorFactory.DefaultImpl();
+            if (this.barrelDistortionConfig == null)
+                barrelDistortionConfig = new BarrelDistortionConfig();
             if (this.pinchConfig == null) pinchConfig = new MDPinchConfig();
             this.screenWrapper = screenWrapper;
-            return new MDVRLibrary(this);
+            return new FishLibrary(this);
         }
     }
 
-    public interface ContentType{
+
+    public interface ContentType {
         int VIDEO = 0;
         int BITMAP = 1;
         int DEFAULT = VIDEO;

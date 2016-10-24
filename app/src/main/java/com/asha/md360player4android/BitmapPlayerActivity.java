@@ -10,7 +10,7 @@ import android.support.annotation.DrawableRes;
 import android.util.Log;
 import android.view.View;
 
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.model.MDRay;
 import com.asha.vrlib.plugins.IMDHotspot;
 import com.asha.vrlib.texture.MD360BitmapTexture;
@@ -80,17 +80,17 @@ public class BitmapPlayerActivity extends MD360PlayerActivity {
     }
 
     @Override
-    protected MDVRLibrary createVRLibrary() {
-        return MDVRLibrary.with(this)
-                .displayMode(MDVRLibrary.DISPLAY_MODE_NORMAL)
-                .interactiveMode(MDVRLibrary.INTERACTIVE_MODE_TOUCH)
-                .asBitmap(new MDVRLibrary.IBitmapProvider() {
+    protected FishLibrary createVRLibrary() {
+        return FishLibrary.with(this)
+                .displayMode(FishLibrary.DISPLAY_MODE_NORMAL)
+                .interactiveMode(FishLibrary.INTERACTIVE_MODE_TOUCH)
+                .asBitmap(new FishLibrary.IBitmapProvider() {
                     @Override
                     public void onProvideBitmap(final MD360BitmapTexture.Callback callback) {
                         loadImage(currentUri(), callback);
                     }
                 })
-                .listenTouchPick(new MDVRLibrary.ITouchPickListener() {
+                .listenTouchPick(new FishLibrary.ITouchPickListener() {
                     @Override
                     public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
                         Log.d(TAG,"Ray:" + ray + ", hitHotspot:" + hitHotspot);

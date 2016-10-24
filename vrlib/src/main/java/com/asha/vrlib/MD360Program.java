@@ -88,10 +88,10 @@ public class MD360Program {
         static String fs(Context context, int type){
             int resId;
             switch (type){
-                case MDVRLibrary.ContentType.BITMAP:
+                case FishLibrary.ContentType.BITMAP:
                     resId = R.raw.fragment_shader_bitmap;
                     break;
-                case MDVRLibrary.ContentType.VIDEO:
+                case FishLibrary.ContentType.VIDEO:
                 default:
                     resId = R.raw.fragment_shader_video;
                     break;

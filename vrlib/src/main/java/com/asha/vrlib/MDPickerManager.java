@@ -35,15 +35,15 @@ public class MDPickerManager {
 
     private MDPluginManager mPluginManager;
 
-    private MDVRLibrary.IEyePickListener mEyePickChangedListener;
+    private FishLibrary.IEyePickListener mEyePickChangedListener;
 
-    private MDVRLibrary.ITouchPickListener mTouchPickListener;
+    private FishLibrary.ITouchPickListener mTouchPickListener;
 
     private EyePickPoster mEyePickPoster = new EyePickPoster();
 
     private TouchPickPoster mTouchPickPoster = new TouchPickPoster();
 
-    private MDVRLibrary.IGestureListener mTouchPicker = new MDVRLibrary.IGestureListener() {
+    private FishLibrary.IGestureListener mTouchPicker = new FishLibrary.IGestureListener() {
         @Override
         public void onClick(MotionEvent e) {
             rayPickAsTouch(e);
@@ -159,7 +159,7 @@ public class MDPickerManager {
         return hitHotspot;
     }
 
-    public MDVRLibrary.IGestureListener getTouchPicker() {
+    public FishLibrary.IGestureListener getTouchPicker() {
         return mTouchPicker;
     }
 
@@ -171,11 +171,11 @@ public class MDPickerManager {
         return new Builder();
     }
 
-    public void setEyePickChangedListener(MDVRLibrary.IEyePickListener eyePickChangedListener) {
+    public void setEyePickChangedListener(FishLibrary.IEyePickListener eyePickChangedListener) {
         this.mEyePickChangedListener = eyePickChangedListener;
     }
 
-    public void setTouchPickListener(MDVRLibrary.ITouchPickListener touchPickListener) {
+    public void setTouchPickListener(FishLibrary.ITouchPickListener touchPickListener) {
         this.mTouchPickListener = touchPickListener;
     }
 

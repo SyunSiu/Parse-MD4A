@@ -6,7 +6,7 @@ import android.opengl.Matrix;
 
 import com.asha.vrlib.MD360Director;
 import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.MDVRLibrary;
+import com.asha.vrlib.FishLibrary;
 import com.asha.vrlib.model.MDMainPluginBuilder;
 import com.asha.vrlib.model.MDPosition;
 import com.asha.vrlib.objects.MDAbsObject3D;
@@ -107,11 +107,11 @@ public class PlaneProjection extends AbsProjectionStrategy {
             float textureRatio = getTextureRatio();
 
             switch (this.mScaleType){
-                case MDVRLibrary.PROJECTION_MODE_PLANE_FULL:
+                case FishLibrary.PROJECTION_MODE_PLANE_FULL:
                     // fullscreen
                     mViewportWidth = mViewportHeight = mTextureWidth = mTextureHeight = sBaseValue;
                     break;
-                case MDVRLibrary.PROJECTION_MODE_PLANE_CROP:
+                case FishLibrary.PROJECTION_MODE_PLANE_CROP:
                     if (textureRatio  > viewportRatio){
                         /**
                          * crop width of texture
@@ -148,7 +148,7 @@ public class PlaneProjection extends AbsProjectionStrategy {
                         mTextureHeight = sBaseValue / textureRatio;
                     }
                     break;
-                case MDVRLibrary.PROJECTION_MODE_PLANE_FIT:
+                case FishLibrary.PROJECTION_MODE_PLANE_FIT:
                 default:
                     if (viewportRatio > textureRatio){
                         /**
