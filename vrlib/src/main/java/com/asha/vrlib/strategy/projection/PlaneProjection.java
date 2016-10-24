@@ -4,16 +4,16 @@ import android.app.Activity;
 import android.graphics.RectF;
 import android.opengl.Matrix;
 
-import com.asha.vrlib.MD360Director;
-import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.model.MDMainPluginBuilder;
-import com.asha.vrlib.model.MDPosition;
-import com.asha.vrlib.objects.MDAbsObject3D;
-import com.asha.vrlib.objects.MDObject3DHelper;
-import com.asha.vrlib.objects.MDPlane;
-import com.asha.vrlib.plugins.MDAbsPlugin;
-import com.asha.vrlib.plugins.MDPanoramaPlugin;
+import com.asha.vrlib.SharkDirector;
+import com.asha.vrlib.SharkDirectorFactory;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.model.SharkPosition;
+import com.asha.vrlib.objects.SharkAbsObject3D;
+import com.asha.vrlib.objects.SharkObject3DHelper;
+import com.asha.vrlib.objects.SharkPlane;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
+import com.asha.vrlib.plugins.SharkPanoramaPlugin;
 
 /**
  * Created by hzqiujiadi on 16/6/26.
@@ -21,11 +21,11 @@ import com.asha.vrlib.plugins.MDPanoramaPlugin;
  */
 public class PlaneProjection extends AbsProjectionStrategy {
 
-    private MDPlane object3D;
+    private SharkPlane object3D;
 
     private PlaneScaleCalculator planeScaleCalculator;
 
-    private static final MDPosition position = MDPosition.newInstance().setZ(-2f);
+    private static final SharkPosition position = SharkPosition.newInstance().setZ(-2f);
 
     private PlaneProjection(PlaneScaleCalculator calculator) {
         planeScaleCalculator = calculator;
@@ -33,8 +33,8 @@ public class PlaneProjection extends AbsProjectionStrategy {
 
     @Override
     public void on(Activity activity) {
-        object3D = new MDPlane(planeScaleCalculator);
-        MDObject3DHelper.loadObj(activity, object3D);
+        object3D = new SharkPlane(planeScaleCalculator);
+        SharkObject3DHelper.loadObj(activity, object3D);
     }
 
     @Override
@@ -48,22 +48,22 @@ public class PlaneProjection extends AbsProjectionStrategy {
     }
 
     @Override
-    public MDAbsObject3D getObject3D() {
+    public SharkAbsObject3D getObject3D() {
         return object3D;
     }
 
     @Override
-    public MDPosition getModelPosition() {
+    public SharkPosition getModelPosition() {
         return position;
     }
 
     @Override
-    public MDAbsPlugin buildMainPlugin(MDMainPluginBuilder builder) {
-        return new MDPanoramaPlugin(builder);
+    public SharkAbsPlugin buildMainPlugin(SharkMainPluginBuilder builder) {
+        return new SharkPanoramaPlugin(builder);
     }
 
     @Override
-    protected MD360DirectorFactory hijackDirectorFactory() {
+    protected SharkDirectorFactory hijackDirectorFactory() {
         return new OrthogonalDirectorFactory();
     }
 
@@ -107,11 +107,11 @@ public class PlaneProjection extends AbsProjectionStrategy {
             float textureRatio = getTextureRatio();
 
             switch (this.mScaleType){
-                case FishLibrary.PROJECTION_MODE_PLANE_FULL:
+                case SharkLibrary.PROJECTION_MODE_PLANE_FULL:
                     // fullscreen
                     mViewportWidth = mViewportHeight = mTextureWidth = mTextureHeight = sBaseValue;
                     break;
-                case FishLibrary.PROJECTION_MODE_PLANE_CROP:
+                case SharkLibrary.PROJECTION_MODE_PLANE_CROP:
                     if (textureRatio  > viewportRatio){
                         /**
                          * crop width of texture
@@ -148,7 +148,7 @@ public class PlaneProjection extends AbsProjectionStrategy {
                         mTextureHeight = sBaseValue / textureRatio;
                     }
                     break;
-                case FishLibrary.PROJECTION_MODE_PLANE_FIT:
+                case SharkLibrary.PROJECTION_MODE_PLANE_FIT:
                 default:
                     if (viewportRatio > textureRatio){
                         /**
@@ -206,14 +206,14 @@ public class PlaneProjection extends AbsProjectionStrategy {
         }
     }
 
-    private class OrthogonalDirectorFactory extends MD360DirectorFactory{
+    private class OrthogonalDirectorFactory extends SharkDirectorFactory {
         @Override
-        public MD360Director createDirector(int index) {
-            return new OrthogonalDirector(new MD360Director.Builder());
+        public SharkDirector createDirector(int index) {
+            return new OrthogonalDirector(new SharkDirector.Builder());
         }
     }
 
-    private class OrthogonalDirector extends MD360Director{
+    private class OrthogonalDirector extends SharkDirector {
 
         private OrthogonalDirector(Builder builder) {
             super(builder);

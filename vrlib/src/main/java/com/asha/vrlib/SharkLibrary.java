@@ -1,0 +1,743 @@
+package com.asha.vrlib;
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.RectF;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.opengl.GLSurfaceView;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.Surface;
+import android.view.View;
+import android.widget.Toast;
+
+import com.asha.vrlib.common.GLUtils;
+import com.asha.vrlib.common.SharkGLHandler;
+import com.asha.vrlib.common.SharkMainHandler;
+import com.asha.vrlib.model.BarrelDistortionConfig;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.model.SharkPinchConfig;
+import com.asha.vrlib.model.SharkRay;
+import com.asha.vrlib.plugins.ISharkHotspot;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
+import com.asha.vrlib.plugins.SharkPluginManager;
+import com.asha.vrlib.strategy.display.DisplayModeManager;
+import com.asha.vrlib.strategy.interactive.InteractiveModeManager;
+import com.asha.vrlib.strategy.projection.IMDProjectionFactory;
+import com.asha.vrlib.strategy.projection.ProjectionModeManager;
+import com.asha.vrlib.texture.SharkBitmapTexture;
+import com.asha.vrlib.texture.SharkTexture;
+import com.asha.vrlib.texture.SharkVideoTexture;
+import com.google.android.apps.muzei.render.GLTextureView;
+
+import java.util.Iterator;
+import java.util.List;
+
+import static com.asha.vrlib.common.SharkUtil.notNull;
+
+
+/**
+ * Fish 库
+ */
+public class SharkLibrary {
+
+
+    private static final String TAG = "FishLib";
+
+
+    public static final int sMultiScreenSize = 2;
+
+
+    // interactive mode
+    public static final int INTERACTIVE_MODE_MOTION = 1;
+    public static final int INTERACTIVE_MODE_TOUCH = 2;
+    public static final int INTERACTIVE_MODE_MOTION_WITH_TOUCH = 3;
+
+
+    // display mode
+    public static final int DISPLAY_MODE_NORMAL = 101;
+    public static final int DISPLAY_MODE_GLASS = 102;
+
+
+    // projection mode
+    public static final int PROJECTION_MODE_SPHERE = 201;
+    public static final int PROJECTION_MODE_DOME180 = 202;
+    public static final int PROJECTION_MODE_DOME230 = 203;
+    public static final int PROJECTION_MODE_DOME180_UPPER = 204;
+    public static final int PROJECTION_MODE_DOME230_UPPER = 205;
+
+
+    /**
+     * @deprecated since 2.0.4
+     * use {@link #PROJECTION_MODE_STEREO_SPHERE_VERTICAL}
+     */
+    @Deprecated
+    public static final int PROJECTION_MODE_STEREO_SPHERE = 206;
+    public static final int PROJECTION_MODE_PLANE_FIT = 207;
+    public static final int PROJECTION_MODE_PLANE_CROP = 208;
+    public static final int PROJECTION_MODE_PLANE_FULL = 209;
+    public static final int PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL = 210;
+    public static final int PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL = 211;
+    public static final int PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL = 212;
+    public static final int PROJECTION_MODE_STEREO_SPHERE_VERTICAL = 213;
+
+
+    // private int mDisplayMode = DISPLAY_MODE_NORMAL;
+    private RectF mTextureSize = new RectF(0, 0, 1024, 1024);
+    private InteractiveModeManager mInteractiveModeManager;
+    private DisplayModeManager mDisplayModeManager;
+    private ProjectionModeManager mProjectionModeManager;
+    private SharkPluginManager mPluginManager;
+    private SharkPickerManager mPickerManager;
+    private SharkGLScreenWrapper mScreenWrapper;
+    private SharkTouchHelper mTouchHelper;
+    private SharkTexture mTexture;
+    private SharkGLHandler mGLHandler;
+
+
+    private SharkLibrary(Builder builder) {
+
+        // init main handler
+        SharkMainHandler.init();
+
+        // init gl handler
+        mGLHandler = new SharkGLHandler();
+
+        // init mode manager
+        initModeManager(builder);
+
+        // init plugin manager
+        initPluginManager(builder);
+
+        // init glSurfaceViews
+        initOpenGL(builder.activity, builder.screenWrapper);
+
+        mTexture = builder.texture;
+        mTouchHelper = new SharkTouchHelper(builder.activity);
+        mTouchHelper.addClickListener(builder.gestureListener);
+        mTouchHelper.setPinchEnabled(builder.pinchEnabled);
+        final UpdatePinchRunnable updatePinchRunnable = new UpdatePinchRunnable();
+        mTouchHelper.setAdvanceGestureListener(new IAdvanceGestureListener() {
+            @Override
+            public void onDrag(float distanceX, float distanceY) {
+                mInteractiveModeManager.handleDrag((int) distanceX, (int) distanceY);
+            }
+
+            @Override
+            public void onPinch(final float scale) {
+                updatePinchRunnable.setScale(scale);
+                mGLHandler.post(updatePinchRunnable);
+            }
+        });
+        mTouchHelper.setPinchConfig(builder.pinchConfig);
+
+        mScreenWrapper.getView().setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mTouchHelper.handleTouchEvent(event);
+            }
+        });
+
+        // init picker manager
+        initPickerManager(builder);
+    }
+
+
+    private class UpdatePinchRunnable implements Runnable {
+        private float scale;
+
+        public void setScale(float scale) {
+            this.scale = scale;
+        }
+
+        @Override
+        public void run() {
+            List<SharkDirector> directors = mProjectionModeManager.getDirectors();
+            for (SharkDirector director : directors) {
+                director.updateProjectionNearScale(scale);
+            }
+        }
+    }
+
+
+    private void initModeManager(Builder builder) {
+
+        // init ProjectionModeManager
+        ProjectionModeManager.Params projectionManagerParams = new ProjectionModeManager.Params();
+        projectionManagerParams.textureSize = mTextureSize;
+        projectionManagerParams.directorFactory = builder.directorFactory;
+        projectionManagerParams.projectionFactory = builder.projectionFactory;
+        projectionManagerParams.mainPluginBuilder = new SharkMainPluginBuilder()
+                .setContentType(builder.contentType)
+                .setTexture(builder.texture);
+
+        mProjectionModeManager = new ProjectionModeManager(builder.projectionMode, mGLHandler, projectionManagerParams);
+        mProjectionModeManager.prepare(builder.activity, builder.notSupportCallback);
+
+        // init DisplayModeManager
+        mDisplayModeManager = new DisplayModeManager(builder.displayMode, mGLHandler);
+        mDisplayModeManager.setBarrelDistortionConfig(builder.barrelDistortionConfig);
+        mDisplayModeManager.setAntiDistortionEnabled(builder.barrelDistortionConfig.isDefaultEnabled());
+        mDisplayModeManager.prepare(builder.activity, builder.notSupportCallback);
+
+        // init InteractiveModeManager
+        InteractiveModeManager.Params interactiveManagerParams = new InteractiveModeManager.Params();
+        interactiveManagerParams.projectionModeManager = mProjectionModeManager;
+        interactiveManagerParams.mMotionDelay = builder.motionDelay;
+        interactiveManagerParams.mSensorListener = builder.sensorListener;
+        mInteractiveModeManager = new InteractiveModeManager(builder.interactiveMode, mGLHandler, interactiveManagerParams);
+        mInteractiveModeManager.prepare(builder.activity, builder.notSupportCallback);
+    }
+
+
+    private void initPluginManager(Builder builder) {
+        mPluginManager = new SharkPluginManager();
+    }
+
+
+    private void initPickerManager(Builder builder) {
+        mPickerManager = SharkPickerManager.with()
+                .setPluginManager(mPluginManager)
+                .setDisplayModeManager(mDisplayModeManager)
+                .setProjectionModeManager(mProjectionModeManager)
+                .build();
+        setEyePickEnable(builder.eyePickEnabled);
+        mPickerManager.setEyePickChangedListener(builder.eyePickChangedListener);
+        mPickerManager.setTouchPickListener(builder.touchPickChangedListener);
+
+        // listener
+        mTouchHelper.addClickListener(mPickerManager.getTouchPicker());
+        mPluginManager.add(mPickerManager.getEyePicker());
+    }
+
+
+    private void initOpenGL(Context context, SharkGLScreenWrapper screenWrapper) {
+        if (GLUtils.supportsEs2(context)) {
+            screenWrapper.init(context);
+            // Request an OpenGL ES 2.0 compatible context.
+
+            SharkRenderer renderer = SharkRenderer.with(context)
+                    .setGLHandler(mGLHandler)
+                    .setPluginManager(mPluginManager)
+                    .setProjectionModeManager(mProjectionModeManager)
+                    .setDisplayModeManager(mDisplayModeManager)
+                    .build();
+
+            // Set the renderer to our demo renderer, defined below.
+            screenWrapper.setRenderer(renderer);
+            this.mScreenWrapper = screenWrapper;
+        } else {
+            this.mScreenWrapper.getView().setVisibility(View.GONE);
+            Toast.makeText(context, "OpenGLES2 not supported.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    public void switchInteractiveMode(final Activity activity) {
+        mInteractiveModeManager.switchMode(activity);
+    }
+
+
+    /**
+     * Switch Interactive Mode
+     *
+     * @param activity activity
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #INTERACTIVE_MODE_MOTION}
+     *                 {@link #INTERACTIVE_MODE_TOUCH}
+     *                 {@link #INTERACTIVE_MODE_MOTION_WITH_TOUCH}
+     */
+    public void switchInteractiveMode(final Activity activity, final int mode) {
+        mInteractiveModeManager.switchMode(activity, mode);
+    }
+
+
+    public void switchDisplayMode(final Activity activity) {
+        mDisplayModeManager.switchMode(activity);
+    }
+
+
+    /**
+     * Switch Display Mode
+     *
+     * @param activity activity
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #DISPLAY_MODE_GLASS}
+     *                 {@link #DISPLAY_MODE_NORMAL}
+     */
+    public void switchDisplayMode(final Activity activity, final int mode) {
+        mDisplayModeManager.switchMode(activity, mode);
+    }
+
+
+    /**
+     * Switch Projection Mode
+     *
+     * @param activity activity
+     * @param mode     mode
+     *                 <p>
+     *                 {@link #PROJECTION_MODE_SPHERE}
+     *                 {@link #PROJECTION_MODE_DOME180}
+     *                 and so on.
+     */
+    public void switchProjectionMode(final Activity activity, final int mode) {
+        mProjectionModeManager.switchMode(activity, mode);
+    }
+
+
+    public void resetTouch() {
+        mGLHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                List<SharkDirector> directors = mProjectionModeManager.getDirectors();
+                for (SharkDirector director : directors) {
+                    director.reset();
+                }
+            }
+        });
+    }
+
+
+    public void resetPinch() {
+        mTouchHelper.reset();
+    }
+
+
+    public void resetEyePick() {
+        mPickerManager.resetEyePick();
+    }
+
+
+    public void setAntiDistortionEnabled(boolean enabled) {
+        mDisplayModeManager.setAntiDistortionEnabled(enabled);
+    }
+
+
+    public boolean isAntiDistortionEnabled() {
+        return mDisplayModeManager.isAntiDistortionEnabled();
+    }
+
+
+    public boolean isEyePickEnable() {
+        return mPickerManager.isEyePickEnable();
+    }
+
+
+    public void setEyePickEnable(boolean eyePickEnable) {
+        mPickerManager.setEyePickEnable(eyePickEnable);
+    }
+
+
+    public void setEyePickChangedListener(IEyePickListener listener) {
+        mPickerManager.setEyePickChangedListener(listener);
+    }
+
+
+    public void setTouchPickListener(ITouchPickListener listener) {
+        mPickerManager.setTouchPickListener(listener);
+    }
+
+
+    public void setPinchScale(float scale) {
+        mTouchHelper.scaleTo(scale);
+    }
+
+
+    public int getScreenSize() {
+        return mDisplayModeManager.getVisibleSize();
+    }
+
+
+    public void addPlugin(SharkAbsPlugin plugin) {
+        mPluginManager.add(plugin);
+    }
+
+
+    public void removePlugin(SharkAbsPlugin plugin) {
+        mPluginManager.remove(plugin);
+    }
+
+
+    public void removePlugins() {
+        mPluginManager.removeAll();
+    }
+
+
+    public void onTextureResize(float width, float height) {
+        mTextureSize.set(0, 0, width, height);
+    }
+
+
+    public void onOrientationChanged(Activity activity) {
+        mInteractiveModeManager.onOrientationChanged(activity);
+    }
+
+
+    public void onResume(Context context) {
+        mInteractiveModeManager.onResume(context);
+        if (mScreenWrapper != null) {
+            mScreenWrapper.onResume();
+        }
+    }
+
+
+    public void onPause(Context context) {
+        mInteractiveModeManager.onPause(context);
+        if (mScreenWrapper != null) {
+            mScreenWrapper.onPause();
+        }
+    }
+
+
+    public void onDestroy() {
+        mGLHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                fireDestroy();
+            }
+        });
+        mGLHandler.destroy();
+    }
+
+
+    private void fireDestroy() {
+        Iterator<SharkAbsPlugin> iterator = mPluginManager.getPlugins().iterator();
+        while (iterator.hasNext()) {
+            SharkAbsPlugin plugin = iterator.next();
+            plugin.destroy();
+        }
+
+        SharkAbsPlugin mainPlugin = mProjectionModeManager.getMainPlugin();
+        if (mainPlugin != null) {
+            mainPlugin.destroy();
+        }
+
+        if (mTexture != null) {
+            mTexture.destroy();
+            mTexture.release();
+            mTexture = null;
+        }
+    }
+
+
+    /**
+     * handle touch touch to rotate the model
+     *
+     * @param event
+     * @return true if handled.
+     * @deprecated deprecated since 2.0
+     */
+    public boolean handleTouchEvent(MotionEvent event) {
+        Log.e(TAG, "please remove the handleTouchEvent in activity!");
+        return false;
+    }
+
+
+    public int getInteractiveMode() {
+        return mInteractiveModeManager.getMode();
+    }
+
+
+    public int getDisplayMode() {
+        return mDisplayModeManager.getMode();
+    }
+
+
+    public int getProjectionMode() {
+        return mProjectionModeManager.getMode();
+    }
+
+
+    public void notifyPlayerChanged() {
+        if (mTexture != null) {
+            mTexture.notifyChanged();
+        }
+    }
+
+
+    public interface IOnSurfaceReadyCallback {
+        void onSurfaceReady(Surface surface);
+    }
+
+
+    public interface IBitmapProvider {
+        void onProvideBitmap(SharkBitmapTexture.Callback callback);
+    }
+
+
+    public interface INotSupportCallback {
+        void onNotSupport(int mode);
+    }
+
+
+    public interface IGestureListener {
+        void onClick(MotionEvent e);
+    }
+
+
+    interface IAdvanceGestureListener {
+        void onDrag(float distanceX, float distanceY);
+
+        void onPinch(float scale);
+    }
+
+
+    public interface IEyePickListener {
+        void onHotspotHit(ISharkHotspot hitHotspot, long hitTimestamp);
+    }
+
+
+    public interface ITouchPickListener {
+        void onHotspotHit(ISharkHotspot hitHotspot, SharkRay ray);
+    }
+
+
+    public static Builder with(Activity activity) {
+        return new Builder(activity);
+    }
+
+
+    /**
+     *
+     */
+    public static class Builder {
+        private int displayMode = DISPLAY_MODE_NORMAL;
+        private int interactiveMode = INTERACTIVE_MODE_MOTION;
+        private int projectionMode = PROJECTION_MODE_SPHERE;
+        private Activity activity;
+        private int contentType = ContentType.DEFAULT;
+        private SharkTexture texture;
+        private INotSupportCallback notSupportCallback;
+        private IGestureListener gestureListener;
+        private boolean pinchEnabled; // default false.
+        private boolean eyePickEnabled = true; // default true.
+        private BarrelDistortionConfig barrelDistortionConfig;
+        private IEyePickListener eyePickChangedListener;
+        private ITouchPickListener touchPickChangedListener;
+        private SharkDirectorFactory directorFactory;
+        private int motionDelay = SensorManager.SENSOR_DELAY_GAME;
+        private SensorEventListener sensorListener;
+        private SharkGLScreenWrapper screenWrapper;
+        private IMDProjectionFactory projectionFactory;
+        private SharkPinchConfig pinchConfig;
+
+
+        private Builder(Activity activity) {
+            this.activity = activity;
+        }
+
+
+        public Builder displayMode(int displayMode) {
+            this.displayMode = displayMode;
+            return this;
+        }
+
+
+        public Builder interactiveMode(int interactiveMode) {
+            this.interactiveMode = interactiveMode;
+            return this;
+        }
+
+
+        public Builder projectionMode(int projectionMode) {
+            this.projectionMode = projectionMode;
+            return this;
+        }
+
+
+        public Builder ifNotSupport(INotSupportCallback callback) {
+            this.notSupportCallback = callback;
+            return this;
+        }
+
+
+        public Builder asVideo(IOnSurfaceReadyCallback callback) {
+            texture = new SharkVideoTexture(callback);
+            contentType = ContentType.VIDEO;
+            return this;
+        }
+
+
+        public Builder asBitmap(IBitmapProvider bitmapProvider) {
+            notNull(bitmapProvider, "bitmap Provider can't be null!");
+            texture = new SharkBitmapTexture(bitmapProvider);
+            contentType = ContentType.BITMAP;
+            return this;
+        }
+
+
+        /**
+         * gesture listener, e.g.
+         * onClick
+         *
+         * @param listener listener
+         * @return builder
+         * @deprecated please use {@link #listenGesture(IGestureListener)}
+         */
+        @Deprecated
+        public Builder gesture(IGestureListener listener) {
+            gestureListener = listener;
+            return this;
+        }
+
+
+        /**
+         * enable or disable the pinch gesture
+         *
+         * @param enabled default is false
+         * @return builder
+         */
+        public Builder pinchEnabled(boolean enabled) {
+            this.pinchEnabled = enabled;
+            return this;
+        }
+
+
+        /**
+         * enable or disable the eye picking.
+         *
+         * @param enabled default is false
+         * @return builder
+         */
+        public Builder eyePickEanbled(boolean enabled) {
+            this.eyePickEnabled = enabled;
+            return this;
+        }
+
+
+        /**
+         * gesture listener, e.g.
+         * onClick
+         *
+         * @param listener listener
+         * @return builder
+         */
+        public Builder listenGesture(IGestureListener listener) {
+            gestureListener = listener;
+            return this;
+        }
+
+
+        /**
+         * IPickListener listener
+         *
+         * @param listener listener
+         * @return builder
+         */
+        public Builder listenEyePick(IEyePickListener listener) {
+            this.eyePickChangedListener = listener;
+            return this;
+        }
+
+
+        /**
+         * IPickListener listener
+         *
+         * @param listener listener
+         * @return builder
+         */
+        public Builder listenTouchPick(ITouchPickListener listener) {
+            this.touchPickChangedListener = listener;
+            return this;
+        }
+
+
+        /**
+         * sensor delay in motion mode.
+         * <p>
+         * {@link android.hardware.SensorManager#SENSOR_DELAY_FASTEST}
+         * {@link android.hardware.SensorManager#SENSOR_DELAY_GAME}
+         * {@link android.hardware.SensorManager#SENSOR_DELAY_NORMAL}
+         * {@link android.hardware.SensorManager#SENSOR_DELAY_UI}
+         *
+         * @param motionDelay default is {@link android.hardware.SensorManager#SENSOR_DELAY_GAME}
+         * @return builder
+         */
+        public Builder motionDelay(int motionDelay) {
+            this.motionDelay = motionDelay;
+            return this;
+        }
+
+
+        public Builder sensorCallback(SensorEventListener callback) {
+            this.sensorListener = callback;
+            return this;
+        }
+
+
+        public Builder directorFactory(SharkDirectorFactory directorFactory) {
+            this.directorFactory = directorFactory;
+            return this;
+        }
+
+
+        public Builder projectionFactory(IMDProjectionFactory projectionFactory) {
+            this.projectionFactory = projectionFactory;
+            return this;
+        }
+
+
+        public Builder barrelDistortionConfig(BarrelDistortionConfig config) {
+            this.barrelDistortionConfig = config;
+            return this;
+        }
+
+
+        public Builder pinchConfig(SharkPinchConfig config) {
+            this.pinchConfig = config;
+            return this;
+        }
+
+
+        /**
+         * build it!
+         *
+         * @param glViewId will find the GLSurfaceView by glViewId in the giving {@link #activity}
+         *                 or find the GLTextureView by glViewId
+         * @return vr lib
+         */
+        public SharkLibrary build(int glViewId) {
+            View view = activity.findViewById(glViewId);
+            if (view instanceof GLSurfaceView) {
+                return build((GLSurfaceView) view);
+            } else if (view instanceof GLTextureView) {
+                return build((GLTextureView) view);
+            } else {
+                throw new RuntimeException("Please ensure the glViewId is instance of GLSurfaceView or GLTextureView");
+            }
+        }
+
+
+        public SharkLibrary build(GLSurfaceView glSurfaceView) {
+            return build(SharkGLScreenWrapper.wrap(glSurfaceView));
+        }
+
+
+        public SharkLibrary build(GLTextureView glTextureView) {
+            return build(SharkGLScreenWrapper.wrap(glTextureView));
+        }
+
+
+        private SharkLibrary build(SharkGLScreenWrapper screenWrapper) {
+            notNull(texture, "You must call video/bitmap function before build");
+            if (this.directorFactory == null)
+                directorFactory = new SharkDirectorFactory.DefaultImpl();
+            if (this.barrelDistortionConfig == null)
+                barrelDistortionConfig = new BarrelDistortionConfig();
+            if (this.pinchConfig == null) pinchConfig = new SharkPinchConfig();
+            this.screenWrapper = screenWrapper;
+            return new SharkLibrary(this);
+        }
+    }
+
+
+    public interface ContentType {
+        int VIDEO = 0;
+        int BITMAP = 1;
+        int DEFAULT = VIDEO;
+    }
+}

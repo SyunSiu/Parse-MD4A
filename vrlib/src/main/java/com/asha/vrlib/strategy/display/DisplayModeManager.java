@@ -1,7 +1,7 @@
 package com.asha.vrlib.strategy.display;
 
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.common.MDGLHandler;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.common.SharkGLHandler;
 import com.asha.vrlib.model.BarrelDistortionConfig;
 import com.asha.vrlib.strategy.ModeManager;
 
@@ -11,12 +11,12 @@ import com.asha.vrlib.strategy.ModeManager;
  */
 public class DisplayModeManager extends ModeManager<AbsDisplayStrategy> implements IDisplayMode {
 
-    public static int[] sModes = {FishLibrary.DISPLAY_MODE_NORMAL, FishLibrary.DISPLAY_MODE_GLASS};
+    public static int[] sModes = {SharkLibrary.DISPLAY_MODE_NORMAL, SharkLibrary.DISPLAY_MODE_GLASS};
 
     private boolean antiDistortionEnabled;
     private BarrelDistortionConfig barrelDistortionConfig;
 
-    public DisplayModeManager(int mode, MDGLHandler handler) {
+    public DisplayModeManager(int mode, SharkGLHandler handler) {
         super(mode, handler);
     }
 
@@ -28,9 +28,9 @@ public class DisplayModeManager extends ModeManager<AbsDisplayStrategy> implemen
     @Override
     protected AbsDisplayStrategy createStrategy(int mode) {
         switch (mode){
-            case FishLibrary.DISPLAY_MODE_GLASS:
+            case SharkLibrary.DISPLAY_MODE_GLASS:
                 return new GlassStrategy();
-            case FishLibrary.DISPLAY_MODE_NORMAL:
+            case SharkLibrary.DISPLAY_MODE_NORMAL:
             default:
                 return new NormalStrategy();
         }

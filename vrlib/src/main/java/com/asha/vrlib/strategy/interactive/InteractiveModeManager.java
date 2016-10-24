@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.SensorEventListener;
 
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.common.MDGLHandler;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.common.SharkGLHandler;
 import com.asha.vrlib.strategy.ModeManager;
 import com.asha.vrlib.strategy.projection.ProjectionModeManager;
 
@@ -17,21 +17,21 @@ public class InteractiveModeManager extends ModeManager<AbsInteractiveStrategy> 
 
     private boolean mIsResumed;
 
-    private static int[] sModes = {FishLibrary.INTERACTIVE_MODE_MOTION,
-            FishLibrary.INTERACTIVE_MODE_TOUCH,
-            FishLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH,
+    private static int[] sModes = {SharkLibrary.INTERACTIVE_MODE_MOTION,
+            SharkLibrary.INTERACTIVE_MODE_TOUCH,
+            SharkLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH,
     };
 
     public static class Params{
         public int mMotionDelay;
         public SensorEventListener mSensorListener;
         public ProjectionModeManager projectionModeManager;
-        public MDGLHandler glHandler;
+        public SharkGLHandler glHandler;
     }
 
     private Params mParams;
 
-    public InteractiveModeManager(int mode, MDGLHandler handler, Params params) {
+    public InteractiveModeManager(int mode, SharkGLHandler handler, Params params) {
         super(mode, handler);
         mParams = params;
         mParams.glHandler = getGLHandler();
@@ -45,11 +45,11 @@ public class InteractiveModeManager extends ModeManager<AbsInteractiveStrategy> 
     @Override
     protected AbsInteractiveStrategy createStrategy(int mode) {
         switch (mode){
-            case FishLibrary.INTERACTIVE_MODE_MOTION:
+            case SharkLibrary.INTERACTIVE_MODE_MOTION:
                 return new MotionStrategy(mParams);
-            case FishLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH:
+            case SharkLibrary.INTERACTIVE_MODE_MOTION_WITH_TOUCH:
                 return new MotionWithTouchStrategy(mParams);
-            case FishLibrary.INTERACTIVE_MODE_TOUCH:
+            case SharkLibrary.INTERACTIVE_MODE_TOUCH:
             default:
                 return new TouchStrategy(mParams);
         }

@@ -14,11 +14,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.asha.md360player4android.utils.Llog;
-import com.asha.vrlib.MD360Director;
-import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.FishLibrary;
+import com.asha.vrlib.SharkDirector;
+import com.asha.vrlib.SharkDirectorFactory;
+import com.asha.vrlib.SharkLibrary;
 import com.asha.vrlib.model.BarrelDistortionConfig;
-import com.asha.vrlib.model.MDPinchConfig;
+import com.asha.vrlib.model.SharkPinchConfig;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,7 +33,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 /**
  * 播放视频
  */
-public class VideoPlayerActivity extends MD360PlayerActivity {
+public class VideoPlayerActivity extends SharkPlayerActivity {
 
 
     private boolean playFrame;
@@ -105,11 +105,11 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
 
 
     @Override
-    protected FishLibrary createVRLibrary() {
-        return FishLibrary.with(this)
-                .displayMode(FishLibrary.DISPLAY_MODE_NORMAL)
-                .interactiveMode(FishLibrary.INTERACTIVE_MODE_MOTION)
-                .asVideo(new FishLibrary.IOnSurfaceReadyCallback() {
+    protected SharkLibrary createVRLibrary() {
+        return SharkLibrary.with(this)
+                .displayMode(SharkLibrary.DISPLAY_MODE_NORMAL)
+                .interactiveMode(SharkLibrary.INTERACTIVE_MODE_MOTION)
+                .asVideo(new SharkLibrary.IOnSurfaceReadyCallback() {
                     @Override
                     public void onSurfaceReady(Surface surface) {
                         Llog.debug("surfaceReady， 开始setSurface");
@@ -122,20 +122,20 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
 
                     }
                 })
-                .ifNotSupport(new FishLibrary.INotSupportCallback() {
+                .ifNotSupport(new SharkLibrary.INotSupportCallback() {
                     @Override
                     public void onNotSupport(int mode) {
-                        String tip = mode == FishLibrary.INTERACTIVE_MODE_MOTION
+                        String tip = mode == SharkLibrary.INTERACTIVE_MODE_MOTION
                                 ? "onNotSupport:MOTION" : "onNotSupport:" + String.valueOf(mode);
                         Toast.makeText(VideoPlayerActivity.this, tip, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .pinchConfig(new MDPinchConfig().setMin(1.0f).setMax(8.0f).setDefaultValue(0.1f))
+                .pinchConfig(new SharkPinchConfig().setMin(1.0f).setMax(8.0f).setDefaultValue(0.1f))
                 .pinchEnabled(true)
-                .directorFactory(new MD360DirectorFactory() {
+                .directorFactory(new SharkDirectorFactory() {
                     @Override
-                    public MD360Director createDirector(int index) {
-                        return MD360Director.builder().setPitch(90).build();
+                    public SharkDirector createDirector(int index) {
+                        return SharkDirector.builder().setPitch(90).build();
                     }
                 })
                 .projectionFactory(new CustomProjectionFactory())

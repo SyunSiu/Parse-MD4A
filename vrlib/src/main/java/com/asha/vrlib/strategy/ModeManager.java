@@ -2,9 +2,9 @@ package com.asha.vrlib.strategy;
 
 import android.app.Activity;
 
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.common.MDGLHandler;
-import com.asha.vrlib.common.MDMainHandler;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.common.SharkGLHandler;
+import com.asha.vrlib.common.SharkMainHandler;
 
 import java.util.Arrays;
 
@@ -15,10 +15,10 @@ import java.util.Arrays;
 public abstract class ModeManager<T extends IModeStrategy> {
     private int mMode;
     private T mStrategy;
-    private FishLibrary.INotSupportCallback mCallback;
-    private MDGLHandler mGLHandler;
+    private SharkLibrary.INotSupportCallback mCallback;
+    private SharkGLHandler mGLHandler;
 
-    public ModeManager(int mode, MDGLHandler handler) {
+    public ModeManager(int mode, SharkGLHandler handler) {
         this.mGLHandler = handler;
         this.mMode = mode;
     }
@@ -27,7 +27,7 @@ public abstract class ModeManager<T extends IModeStrategy> {
      * must call after new instance
      * @param activity activity
      */
-    public void prepare(Activity activity, FishLibrary.INotSupportCallback callback){
+    public void prepare(Activity activity, SharkLibrary.INotSupportCallback callback){
         mCallback = callback;
         initMode(activity,mMode);
     }
@@ -42,7 +42,7 @@ public abstract class ModeManager<T extends IModeStrategy> {
         }
         mStrategy = createStrategy(mode);
         if (!mStrategy.isSupport(activity)){
-            MDMainHandler.sharedHandler().post(new Runnable() {
+            SharkMainHandler.sharedHandler().post(new Runnable() {
                 @Override
                 public void run() {
                     if (mCallback != null) mCallback.onNotSupport(mode);
@@ -98,7 +98,7 @@ public abstract class ModeManager<T extends IModeStrategy> {
         return mMode;
     }
 
-    public MDGLHandler getGLHandler() {
+    public SharkGLHandler getGLHandler() {
         return mGLHandler;
     }
 }

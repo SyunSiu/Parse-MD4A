@@ -2,9 +2,9 @@ package com.asha.vrlib.strategy.projection;
 
 import android.content.Context;
 
-import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.model.MDMainPluginBuilder;
-import com.asha.vrlib.plugins.MDAbsPlugin;
+import com.asha.vrlib.SharkDirectorFactory;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
 import com.asha.vrlib.strategy.IModeStrategy;
 
 /**
@@ -23,7 +23,7 @@ public abstract class AbsProjectionStrategy implements IModeStrategy, IProjectio
 
     }
 
-    protected MD360DirectorFactory hijackDirectorFactory(){ return null; }
+    protected SharkDirectorFactory hijackDirectorFactory(){ return null; }
 
-    abstract MDAbsPlugin buildMainPlugin(MDMainPluginBuilder builder);
+    abstract SharkAbsPlugin buildMainPlugin(SharkMainPluginBuilder builder);
 }

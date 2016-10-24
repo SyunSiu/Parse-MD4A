@@ -3,13 +3,13 @@ package com.asha.vrlib.strategy.projection;
 import android.app.Activity;
 import android.graphics.RectF;
 
-import com.asha.vrlib.model.MDMainPluginBuilder;
-import com.asha.vrlib.model.MDPosition;
-import com.asha.vrlib.objects.MDAbsObject3D;
-import com.asha.vrlib.objects.MDDome3D;
-import com.asha.vrlib.objects.MDObject3DHelper;
-import com.asha.vrlib.plugins.MDAbsPlugin;
-import com.asha.vrlib.plugins.MDPanoramaPlugin;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.model.SharkPosition;
+import com.asha.vrlib.objects.SharkAbsObject3D;
+import com.asha.vrlib.objects.SharkDome3D;
+import com.asha.vrlib.objects.SharkObject3DHelper;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
+import com.asha.vrlib.plugins.SharkPanoramaPlugin;
 
 /**
  * Created by hzqiujiadi on 16/6/25.
@@ -17,7 +17,7 @@ import com.asha.vrlib.plugins.MDPanoramaPlugin;
  */
 public class DomeProjection extends AbsProjectionStrategy {
 
-    MDAbsObject3D object3D;
+    SharkAbsObject3D object3D;
 
     private float mDegree;
 
@@ -33,8 +33,8 @@ public class DomeProjection extends AbsProjectionStrategy {
 
     @Override
     public void on(Activity activity) {
-        object3D = new MDDome3D(mTextureSize, mDegree, mIsUpper);
-        MDObject3DHelper.loadObj(activity, object3D);
+        object3D = new SharkDome3D(mTextureSize, mDegree, mIsUpper);
+        SharkObject3DHelper.loadObj(activity, object3D);
     }
 
     @Override
@@ -48,17 +48,17 @@ public class DomeProjection extends AbsProjectionStrategy {
     }
 
     @Override
-    public MDAbsObject3D getObject3D() {
+    public SharkAbsObject3D getObject3D() {
         return object3D;
     }
 
     @Override
-    public MDPosition getModelPosition() {
-        return MDPosition.sOriginalPosition;
+    public SharkPosition getModelPosition() {
+        return SharkPosition.sOriginalPosition;
     }
 
     @Override
-    public MDAbsPlugin buildMainPlugin(MDMainPluginBuilder builder) {
-        return new MDPanoramaPlugin(builder);
+    public SharkAbsPlugin buildMainPlugin(SharkMainPluginBuilder builder) {
+        return new SharkPanoramaPlugin(builder);
     }
 }

@@ -10,10 +10,10 @@ import android.support.annotation.DrawableRes;
 import android.util.Log;
 import android.view.View;
 
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.model.MDRay;
-import com.asha.vrlib.plugins.IMDHotspot;
-import com.asha.vrlib.texture.MD360BitmapTexture;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.model.SharkRay;
+import com.asha.vrlib.plugins.ISharkHotspot;
+import com.asha.vrlib.texture.SharkBitmapTexture;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -24,7 +24,7 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public class BitmapPlayerActivity extends MD360PlayerActivity {
+public class BitmapPlayerActivity extends SharkPlayerActivity {
 
     private static final String TAG = "BitmapPlayerActivity";
 
@@ -46,7 +46,7 @@ public class BitmapPlayerActivity extends MD360PlayerActivity {
 
     private Target mTarget;// keep the reference for picasso.
 
-    private void loadImage(Uri uri, final MD360BitmapTexture.Callback callback){
+    private void loadImage(Uri uri, final SharkBitmapTexture.Callback callback){
         mTarget = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -80,19 +80,19 @@ public class BitmapPlayerActivity extends MD360PlayerActivity {
     }
 
     @Override
-    protected FishLibrary createVRLibrary() {
-        return FishLibrary.with(this)
-                .displayMode(FishLibrary.DISPLAY_MODE_NORMAL)
-                .interactiveMode(FishLibrary.INTERACTIVE_MODE_TOUCH)
-                .asBitmap(new FishLibrary.IBitmapProvider() {
+    protected SharkLibrary createVRLibrary() {
+        return SharkLibrary.with(this)
+                .displayMode(SharkLibrary.DISPLAY_MODE_NORMAL)
+                .interactiveMode(SharkLibrary.INTERACTIVE_MODE_TOUCH)
+                .asBitmap(new SharkLibrary.IBitmapProvider() {
                     @Override
-                    public void onProvideBitmap(final MD360BitmapTexture.Callback callback) {
+                    public void onProvideBitmap(final SharkBitmapTexture.Callback callback) {
                         loadImage(currentUri(), callback);
                     }
                 })
-                .listenTouchPick(new FishLibrary.ITouchPickListener() {
+                .listenTouchPick(new SharkLibrary.ITouchPickListener() {
                     @Override
-                    public void onHotspotHit(IMDHotspot hitHotspot, MDRay ray) {
+                    public void onHotspotHit(ISharkHotspot hitHotspot, SharkRay ray) {
                         Log.d(TAG,"Ray:" + ray + ", hitHotspot:" + hitHotspot);
                     }
                 })

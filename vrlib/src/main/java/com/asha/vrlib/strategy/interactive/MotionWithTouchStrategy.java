@@ -2,7 +2,7 @@ package com.asha.vrlib.strategy.interactive;
 
 import android.content.res.Resources;
 
-import com.asha.vrlib.MD360Director;
+import com.asha.vrlib.SharkDirector;
 
 /**
  * Created by hzqiujiadi on 16/6/10.
@@ -20,7 +20,7 @@ public class MotionWithTouchStrategy extends MotionStrategy {
 
     @Override
     public boolean handleDrag(int distanceX, int distanceY) {
-        for (MD360Director director : getDirectorList()){
+        for (SharkDirector director : getDirectorList()){
             director.setDeltaX(director.getDeltaX() - distanceX / sDensity * sDamping);
             // director.setDeltaY(director.getDeltaY() - distanceY / sDensity * sDamping);
         }

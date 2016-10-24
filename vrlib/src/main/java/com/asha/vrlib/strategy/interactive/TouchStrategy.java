@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.asha.vrlib.MD360Director;
+import com.asha.vrlib.SharkDirector;
 
 /**
  * Created by hzqiujiadi on 16/3/19.
@@ -30,7 +30,7 @@ public class TouchStrategy extends AbsInteractiveStrategy {
 
     @Override
     public boolean handleDrag(final int distanceX, final int distanceY) {
-        for (MD360Director director : getDirectorList()){
+        for (SharkDirector director : getDirectorList()){
             director.setDeltaX(director.getDeltaX() - distanceX / sDensity * sDamping);
             director.setDeltaY(director.getDeltaY() - distanceY / sDensity * sDamping);
         }
@@ -44,7 +44,7 @@ public class TouchStrategy extends AbsInteractiveStrategy {
 
     @Override
     public void on(Activity activity) {
-        for (MD360Director director : getDirectorList()){
+        for (SharkDirector director : getDirectorList()){
             director.reset();
         }
     }

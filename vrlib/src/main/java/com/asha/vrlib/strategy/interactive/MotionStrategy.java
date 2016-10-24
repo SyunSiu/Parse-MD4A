@@ -8,9 +8,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-import com.asha.vrlib.MD360Director;
-import com.asha.vrlib.common.MDMainHandler;
-import com.asha.vrlib.common.VRUtil;
+import com.asha.vrlib.SharkDirector;
+import com.asha.vrlib.common.SharkMainHandler;
+import com.asha.vrlib.common.SharkUtil;
 
 /**
  * Created by hzqiujiadi on 16/3/19.
@@ -55,7 +55,7 @@ public class MotionStrategy extends AbsInteractiveStrategy implements SensorEven
     @Override
     public void on(Activity activity) {
         mDeviceRotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        for (MD360Director director : getDirectorList()){
+        for (SharkDirector director : getDirectorList()){
             director.reset();
         }
     }
@@ -88,7 +88,7 @@ public class MotionStrategy extends AbsInteractiveStrategy implements SensorEven
             return;
         }
 
-        mSensorManager.registerListener(this, sensor, getParams().mMotionDelay, MDMainHandler.sharedHandler());
+        mSensorManager.registerListener(this, sensor, getParams().mMotionDelay, SharkMainHandler.sharedHandler());
 
         mRegistered = true;
     }
@@ -114,7 +114,7 @@ public class MotionStrategy extends AbsInteractiveStrategy implements SensorEven
             switch (type){
                 case Sensor.TYPE_ROTATION_VECTOR:
                     // post
-                    VRUtil.sensorRotationVector2Matrix(event, mDeviceRotation, mSensorMatrix);
+                    SharkUtil.sensorRotationVector2Matrix(event, mDeviceRotation, mSensorMatrix);
                     getParams().glHandler.post(updateSensorRunnable);
                     break;
             }
@@ -125,7 +125,7 @@ public class MotionStrategy extends AbsInteractiveStrategy implements SensorEven
         @Override
         public void run() {
             if (!mRegistered) return;
-            for (MD360Director director : getDirectorList()){
+            for (SharkDirector director : getDirectorList()){
                 director.updateSensorMatrix(mSensorMatrix);
                 // if (mDisplayMode == DISPLAY_MODE_NORMAL) break;
             }

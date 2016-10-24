@@ -3,15 +3,15 @@ package com.asha.vrlib.strategy.projection;
 import android.app.Activity;
 import android.graphics.RectF;
 
-import com.asha.vrlib.MD360Director;
-import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.FishLibrary;
-import com.asha.vrlib.common.MDDirection;
-import com.asha.vrlib.common.MDGLHandler;
-import com.asha.vrlib.model.MDMainPluginBuilder;
-import com.asha.vrlib.model.MDPosition;
-import com.asha.vrlib.objects.MDAbsObject3D;
-import com.asha.vrlib.plugins.MDAbsPlugin;
+import com.asha.vrlib.SharkDirector;
+import com.asha.vrlib.SharkDirectorFactory;
+import com.asha.vrlib.SharkLibrary;
+import com.asha.vrlib.common.SharkDirection;
+import com.asha.vrlib.common.SharkGLHandler;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.model.SharkPosition;
+import com.asha.vrlib.objects.SharkAbsObject3D;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
 import com.asha.vrlib.strategy.ModeManager;
 
 import java.util.LinkedList;
@@ -23,28 +23,28 @@ import java.util.List;
  */
 public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> implements IProjectionMode {
 
-    public static int[] sModes = {FishLibrary.PROJECTION_MODE_SPHERE, FishLibrary.PROJECTION_MODE_DOME180, FishLibrary.PROJECTION_MODE_DOME230};
+    public static int[] sModes = {SharkLibrary.PROJECTION_MODE_SPHERE, SharkLibrary.PROJECTION_MODE_DOME180, SharkLibrary.PROJECTION_MODE_DOME230};
 
     public static class Params{
         public RectF textureSize;
-        public MD360DirectorFactory directorFactory;
-        public MDMainPluginBuilder mainPluginBuilder;
+        public SharkDirectorFactory directorFactory;
+        public SharkMainPluginBuilder mainPluginBuilder;
         public IMDProjectionFactory projectionFactory;
     }
 
-    private List<MD360Director> mDirectors = new LinkedList<>();
+    private List<SharkDirector> mDirectors = new LinkedList<>();
 
     private RectF mTextureSize;
 
-    private MD360DirectorFactory mCustomDirectorFactory;
+    private SharkDirectorFactory mCustomDirectorFactory;
 
-    private MDAbsPlugin mMainPlugin;
+    private SharkAbsPlugin mMainPlugin;
 
-    private MDMainPluginBuilder mMainPluginBuilder;
+    private SharkMainPluginBuilder mMainPluginBuilder;
 
     private IMDProjectionFactory mProjectionFactory;
 
-    public ProjectionModeManager(int mode, MDGLHandler handler, Params projectionManagerParams) {
+    public ProjectionModeManager(int mode, SharkGLHandler handler, Params projectionManagerParams) {
         super(mode, handler);
         this.mTextureSize = projectionManagerParams.textureSize;
         this.mCustomDirectorFactory = projectionManagerParams.directorFactory;
@@ -53,7 +53,7 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
         this.mMainPluginBuilder.setProjectionModeManager(this);
     }
 
-    public MDAbsPlugin getMainPlugin() {
+    public SharkAbsPlugin getMainPlugin() {
         if (mMainPlugin == null){
             mMainPlugin = getStrategy().buildMainPlugin(mMainPluginBuilder);
         }
@@ -77,10 +77,10 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
 
         mDirectors.clear();
 
-        MD360DirectorFactory factory = getStrategy().hijackDirectorFactory();
+        SharkDirectorFactory factory = getStrategy().hijackDirectorFactory();
         factory = factory == null ? mCustomDirectorFactory : factory;
 
-        for (int i = 0; i < FishLibrary.sMultiScreenSize; i++){
+        for (int i = 0; i < SharkLibrary.sMultiScreenSize; i++){
             mDirectors.add(factory.createDirector(i));
         }
     }
@@ -93,28 +93,28 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
         }
         
         switch (mode){
-            case FishLibrary.PROJECTION_MODE_DOME180:
+            case SharkLibrary.PROJECTION_MODE_DOME180:
                 return new DomeProjection(this.mTextureSize,180f,false);
-            case FishLibrary.PROJECTION_MODE_DOME230:
+            case SharkLibrary.PROJECTION_MODE_DOME230:
                 return new DomeProjection(this.mTextureSize,230f,false);
-            case FishLibrary.PROJECTION_MODE_DOME180_UPPER:
+            case SharkLibrary.PROJECTION_MODE_DOME180_UPPER:
                 return new DomeProjection(this.mTextureSize,180f,true);
-            case FishLibrary.PROJECTION_MODE_DOME230_UPPER:
+            case SharkLibrary.PROJECTION_MODE_DOME230_UPPER:
                 return new DomeProjection(this.mTextureSize,230f,true);
-            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL:
-                return new StereoSphereProjection(MDDirection.HORIZONTAL);
-            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE:
-            case FishLibrary.PROJECTION_MODE_STEREO_SPHERE_VERTICAL:
-                return new StereoSphereProjection(MDDirection.VERTICAL);
-            case FishLibrary.PROJECTION_MODE_PLANE_FIT:
-            case FishLibrary.PROJECTION_MODE_PLANE_CROP:
-            case FishLibrary.PROJECTION_MODE_PLANE_FULL:
+            case SharkLibrary.PROJECTION_MODE_STEREO_SPHERE_HORIZONTAL:
+                return new StereoSphereProjection(SharkDirection.HORIZONTAL);
+            case SharkLibrary.PROJECTION_MODE_STEREO_SPHERE:
+            case SharkLibrary.PROJECTION_MODE_STEREO_SPHERE_VERTICAL:
+                return new StereoSphereProjection(SharkDirection.VERTICAL);
+            case SharkLibrary.PROJECTION_MODE_PLANE_FIT:
+            case SharkLibrary.PROJECTION_MODE_PLANE_CROP:
+            case SharkLibrary.PROJECTION_MODE_PLANE_FULL:
                 return PlaneProjection.create(mode,this.mTextureSize);
-            case FishLibrary.PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL:
-                return new MultiFishEyeProjection(1f, MDDirection.HORIZONTAL);
-            case FishLibrary.PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL:
-                return new MultiFishEyeProjection(1f, MDDirection.VERTICAL);
-            case FishLibrary.PROJECTION_MODE_SPHERE:
+            case SharkLibrary.PROJECTION_MODE_MULTI_FISH_EYE_HORIZONTAL:
+                return new MultiFishEyeProjection(1f, SharkDirection.HORIZONTAL);
+            case SharkLibrary.PROJECTION_MODE_MULTI_FISH_EYE_VERTICAL:
+                return new MultiFishEyeProjection(1f, SharkDirection.VERTICAL);
+            case SharkLibrary.PROJECTION_MODE_SPHERE:
             default:
                 return new SphereProjection();
         }
@@ -126,16 +126,16 @@ public class ProjectionModeManager extends ModeManager<AbsProjectionStrategy> im
     }
 
     @Override
-    public MDPosition getModelPosition() {
+    public SharkPosition getModelPosition() {
         return getStrategy().getModelPosition();
     }
 
     @Override
-    public MDAbsObject3D getObject3D() {
+    public SharkAbsObject3D getObject3D() {
         return getStrategy().getObject3D();
     }
 
-    public List<MD360Director> getDirectors() {
+    public List<SharkDirector> getDirectors() {
         return mDirectors;
     }
 }

@@ -1,6 +1,6 @@
 package com.asha.vrlib.strategy.interactive;
 
-import com.asha.vrlib.MD360Director;
+import com.asha.vrlib.SharkDirector;
 import com.asha.vrlib.strategy.IModeStrategy;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public abstract class AbsInteractiveStrategy implements IModeStrategy, IInteract
         return params;
     }
 
-    protected List<MD360Director> getDirectorList() {
+    protected List<SharkDirector> getDirectorList() {
         return params.projectionModeManager.getDirectors();
     }
 }

@@ -2,16 +2,16 @@ package com.asha.vrlib.strategy.projection;
 
 import android.app.Activity;
 
-import com.asha.vrlib.MD360Director;
-import com.asha.vrlib.MD360DirectorFactory;
-import com.asha.vrlib.common.MDDirection;
-import com.asha.vrlib.model.MDMainPluginBuilder;
-import com.asha.vrlib.model.MDPosition;
-import com.asha.vrlib.objects.MDAbsObject3D;
-import com.asha.vrlib.objects.MDObject3DHelper;
-import com.asha.vrlib.objects.MDStereoSphere3D;
-import com.asha.vrlib.plugins.MDAbsPlugin;
-import com.asha.vrlib.plugins.MDPanoramaPlugin;
+import com.asha.vrlib.SharkDirector;
+import com.asha.vrlib.SharkDirectorFactory;
+import com.asha.vrlib.common.SharkDirection;
+import com.asha.vrlib.model.SharkMainPluginBuilder;
+import com.asha.vrlib.model.SharkPosition;
+import com.asha.vrlib.objects.SharkAbsObject3D;
+import com.asha.vrlib.objects.SharkObject3DHelper;
+import com.asha.vrlib.objects.SharkStereoSphere3D;
+import com.asha.vrlib.plugins.SharkAbsPlugin;
+import com.asha.vrlib.plugins.SharkPanoramaPlugin;
 
 /**
  * Created by hzqiujiadi on 16/6/26.
@@ -19,25 +19,25 @@ import com.asha.vrlib.plugins.MDPanoramaPlugin;
  */
 public class StereoSphereProjection extends AbsProjectionStrategy {
 
-    private static class FixedDirectorFactory extends MD360DirectorFactory{
+    private static class FixedDirectorFactory extends SharkDirectorFactory {
         @Override
-        public MD360Director createDirector(int index) {
-            return MD360Director.builder().build();
+        public SharkDirector createDirector(int index) {
+            return SharkDirector.builder().build();
         }
     }
 
-    private MDDirection direction;
+    private SharkDirection direction;
 
-    private MDAbsObject3D object3D;
+    private SharkAbsObject3D object3D;
 
-    public StereoSphereProjection(MDDirection direction) {
+    public StereoSphereProjection(SharkDirection direction) {
         this.direction = direction;
     }
 
     @Override
     public void on(Activity activity) {
-        object3D = new MDStereoSphere3D(direction);
-        MDObject3DHelper.loadObj(activity, object3D);
+        object3D = new SharkStereoSphere3D(direction);
+        SharkObject3DHelper.loadObj(activity, object3D);
     }
 
     @Override
@@ -51,22 +51,22 @@ public class StereoSphereProjection extends AbsProjectionStrategy {
     }
 
     @Override
-    public MDAbsObject3D getObject3D() {
+    public SharkAbsObject3D getObject3D() {
         return object3D;
     }
 
     @Override
-    public MDPosition getModelPosition() {
-        return MDPosition.sOriginalPosition;
+    public SharkPosition getModelPosition() {
+        return SharkPosition.sOriginalPosition;
     }
 
     @Override
-    protected MD360DirectorFactory hijackDirectorFactory() {
+    protected SharkDirectorFactory hijackDirectorFactory() {
         return new FixedDirectorFactory();
     }
 
     @Override
-    public MDAbsPlugin buildMainPlugin(MDMainPluginBuilder builder) {
-        return new MDPanoramaPlugin(builder);
+    public SharkAbsPlugin buildMainPlugin(SharkMainPluginBuilder builder) {
+        return new SharkPanoramaPlugin(builder);
     }
 }
