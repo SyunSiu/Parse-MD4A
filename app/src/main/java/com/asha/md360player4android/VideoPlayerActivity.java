@@ -2,11 +2,14 @@ package com.asha.md360player4android;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.Surface;
+import android.view.View;
 import android.widget.Toast;
 
 import com.asha.md360player4android.utils.Llog;
@@ -23,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
+import tv.danmaku.ijk.media.player.IMediaPlayer;
+
 /**
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
@@ -31,6 +36,7 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
 
 
     private MediaPlayerWrapper mMediaPlayerWrapper = new MediaPlayerWrapper();
+    private boolean playFrame;
 
 
     @Override
@@ -38,56 +44,61 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
         super.onCreate(savedInstanceState);
 
 
-//        String uriStr;
-//        Uri uri = getUri();
-//        if (uri != null) {
-//            uriStr = uri.toString();
-//
-//            if (!TextUtils.isEmpty(uriStr)) {
-//                mMediaPlayerWrapper.openRemoteFile(uri.toString());
-//                mMediaPlayerWrapper.prepare();
-//            }
-//        }
-//
-//
-//        mMediaPlayerWrapper.init();
-//        mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(IMediaPlayer mp) {
-//                cancelBusy();
-//                if (getVRLibrary() != null) {
-//                    getVRLibrary().notifyPlayerChanged();
-//                }
-//            }
-//        });
-//        mMediaPlayerWrapper.getPlayer().setOnErrorListener(new IMediaPlayer.OnErrorListener() {
-//            @Override
-//            public boolean onError(IMediaPlayer mp, int what, int extra) {
-//                String error = String.format("Play Error what=%d extra=%d", what, extra);
-//                Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_SHORT).show();
-//                return true;
-//            }
-//        });
-//        mMediaPlayerWrapper.getPlayer().setOnVideoSizeChangedListener(new IMediaPlayer.OnVideoSizeChangedListener() {
-//            @Override
-//            public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
-//                getVRLibrary().onTextureResize(width, height);
-//            }
-//        });
-//
-//
-//        /** 下一个按钮 */
-//        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getVRLibrary().setPinchScale(7);
-//                mMediaPlayerWrapper.pause();
-//                mMediaPlayerWrapper.destroy();
-//                mMediaPlayerWrapper.init();
-//                mMediaPlayerWrapper.openRemoteFile("file:///mnt/sdcard/vr/video_31b451b7ca49710719b19d22e19d9e60.mp4");
-//                mMediaPlayerWrapper.prepare();
-//            }
-//        });
+        mMediaPlayerWrapper.init();
+        mMediaPlayerWrapper.setPreparedListener(new IMediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(IMediaPlayer mp) {
+                cancelBusy();
+                if (getVRLibrary() != null) {
+                    getVRLibrary().notifyPlayerChanged();
+                }
+            }
+        });
+        mMediaPlayerWrapper.getPlayer().setOnErrorListener(new IMediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(IMediaPlayer mp, int what, int extra) {
+                String error = String.format("Play Error what=%d extra=%d", what, extra);
+                Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
+        mMediaPlayerWrapper.getPlayer().setOnVideoSizeChangedListener(new IMediaPlayer.OnVideoSizeChangedListener() {
+            @Override
+            public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+                getVRLibrary().onTextureResize(width, height);
+            }
+        });
+
+
+        String uriStr;
+        Uri uri = getUri();
+        if (uri != null) {
+            uriStr = uri.toString();
+            if (!TextUtils.isEmpty(uriStr)) {
+                if (uriStr.equals("play frame data")) {
+                    Llog.debug("播放裸帧数据");
+                    playFrame = true;
+                } else {
+                    playFrame = false;
+                    mMediaPlayerWrapper.openRemoteFile(uriStr);
+                    mMediaPlayerWrapper.prepare();
+                }
+            }
+        }
+
+
+        /** 下一个按钮 */
+        findViewById(R.id.control_next).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getVRLibrary().setPinchScale(7);
+                mMediaPlayerWrapper.pause();
+                mMediaPlayerWrapper.destroy();
+                mMediaPlayerWrapper.init();
+                mMediaPlayerWrapper.openRemoteFile("file:///mnt/sdcard/vr/video_31b451b7ca49710719b19d22e19d9e60.mp4");
+                mMediaPlayerWrapper.prepare();
+            }
+        });
 
     }
 
@@ -101,9 +112,12 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
                     public void onSurfaceReady(Surface surface) {
 
                         Llog.debug("surfaceReady， 开始setSurface");
-                        // TODO: 2016/10/18  测试裸数据
-//                        mMediaPlayerWrapper.setSurface(surface);
-                        playWithMediaCodec(surface);
+                        if (playFrame) {
+                            // TODO: 2016/10/18  测试裸数据
+                            playWithMediaCodec(surface);
+                        } else {
+                            mMediaPlayerWrapper.setSurface(surface);
+                        }
 
                     }
                 })
@@ -141,6 +155,7 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
     String fileNameHead = "vvv";
     String fileNameEnd = ".h264";
 
+    private long frameTimeInterval = 70;
 
     private void playWithMediaCodec(Surface surface) {
         Llog.info("进入硬解码");
@@ -216,7 +231,7 @@ public class VideoPlayerActivity extends MD360PlayerActivity {
                             }
                             /** 填充帧数据缓冲 ，Fill frameBuffer */
                             onFrame(buffer, 0, bufLength);
-                            Thread.sleep(70);
+                            Thread.sleep(frameTimeInterval);
                         }
                     } catch (Exception e) {
                         isDecoding = false;
