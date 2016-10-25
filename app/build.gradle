@@ -37,7 +37,7 @@ dependencies {
     //required, enough for most devices.
     compile 'tv.danmaku.ijk.media:ijkplayer-java:0.6.0'
     compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.6.0'
-    compile project(path: ':vrlib')
+    compile project(path: ':SharkLib')
 
     compile 'com.orhanobut:logger:1.11'
 }
