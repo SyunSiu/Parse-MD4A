@@ -24,9 +24,9 @@ import static com.squareup.picasso.MemoryPolicy.NO_STORE;
  * Created by hzqiujiadi on 16/4/5.
  * hzqiujiadi ashqalcn@gmail.com
  */
-public class BitmapPlayerActivity extends SharkPlayerActivity {
+public class BitmapBasePlayActivity extends SharkBasePlayActivity {
 
-    private static final String TAG = "BitmapPlayerActivity";
+    private static final String TAG = "BitmapBasePlayActivity";
 
     private Uri nextUri;
 
@@ -80,7 +80,7 @@ public class BitmapPlayerActivity extends SharkPlayerActivity {
     }
 
     @Override
-    protected SharkLibrary createVRLibrary() {
+    protected SharkLibrary createSharkLibrary() {
         return SharkLibrary.with(this)
                 .displayMode(SharkLibrary.DISPLAY_MODE_NORMAL)
                 .interactiveMode(SharkLibrary.INTERACTIVE_MODE_TOUCH)

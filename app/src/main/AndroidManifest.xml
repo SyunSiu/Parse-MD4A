@@ -32,14 +32,14 @@
 
 
         <activity
-            android:name=".VideoPlayerActivity"
+            android:name=".VideoBasePlayActivity"
             android:configChanges="screenSize|orientation"
             android:label="VideoPlayerActivity"
             android:screenOrientation="landscape" />
 
 
         <activity
-            android:name=".BitmapPlayerActivity"
+            android:name=".BitmapBasePlayActivity"
             android:configChanges="screenSize|orientation"
             android:label="BitmapPlayerActivity"
             android:screenOrientation="landscape" />

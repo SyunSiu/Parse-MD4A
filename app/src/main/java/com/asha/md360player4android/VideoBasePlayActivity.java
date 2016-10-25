@@ -33,7 +33,7 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 /**
  * 播放视频
  */
-public class VideoPlayerActivity extends SharkPlayerActivity {
+public class VideoBasePlayActivity extends SharkBasePlayActivity {
 
 
     private boolean playFrame;
@@ -59,7 +59,7 @@ public class VideoPlayerActivity extends SharkPlayerActivity {
             @Override
             public boolean onError(IMediaPlayer mp, int what, int extra) {
                 String error = String.format("Play Error what=%d extra=%d", what, extra);
-                Toast.makeText(VideoPlayerActivity.this, error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(VideoBasePlayActivity.this, error, Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -105,7 +105,7 @@ public class VideoPlayerActivity extends SharkPlayerActivity {
 
 
     @Override
-    protected SharkLibrary createVRLibrary() {
+    protected SharkLibrary createSharkLibrary() {
         return SharkLibrary.with(this)
                 .displayMode(SharkLibrary.DISPLAY_MODE_NORMAL)
                 .interactiveMode(SharkLibrary.INTERACTIVE_MODE_MOTION)
@@ -127,7 +127,7 @@ public class VideoPlayerActivity extends SharkPlayerActivity {
                     public void onNotSupport(int mode) {
                         String tip = mode == SharkLibrary.INTERACTIVE_MODE_MOTION
                                 ? "onNotSupport:MOTION" : "onNotSupport:" + String.valueOf(mode);
-                        Toast.makeText(VideoPlayerActivity.this, tip, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(VideoBasePlayActivity.this, tip, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .pinchConfig(new SharkPinchConfig().setMin(1.0f).setMax(8.0f).setDefaultValue(0.1f))

@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String url = et.getText().toString();
                 if (!TextUtils.isEmpty(url)) {
-                    SharkPlayerActivity.startVideo(MainActivity.this, Uri.parse(url));
+                    SharkBasePlayActivity.startVideo(MainActivity.this, Uri.parse(url));
                 } else {
                     Toast.makeText(MainActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
                 }
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String url = et.getText().toString();
                 if (!TextUtils.isEmpty(url)) {
-                    SharkPlayerActivity.startBitmap(MainActivity.this, Uri.parse(url));
+                    SharkBasePlayActivity.startBitmap(MainActivity.this, Uri.parse(url));
                 } else {
                     Toast.makeText(MainActivity.this, "empty url!", Toast.LENGTH_SHORT).show();
                 }

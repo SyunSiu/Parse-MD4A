@@ -34,16 +34,16 @@ import java.util.Locale;
 /**
  * using SharkRenderer
  */
-public abstract class SharkPlayerActivity extends Activity {
+public abstract class SharkBasePlayActivity extends Activity {
 
 
     public static void startVideo(Context context, Uri uri) {
-        start(context, uri, VideoPlayerActivity.class);
+        start(context, uri, VideoBasePlayActivity.class);
     }
 
 
     public static void startBitmap(Context context, Uri uri) {
-        start(context, uri, BitmapPlayerActivity.class);
+        start(context, uri, BitmapBasePlayActivity.class);
     }
 
 
@@ -121,7 +121,7 @@ public abstract class SharkPlayerActivity extends Activity {
         /**
          * 初始化3D库
          */
-        mVRLibrary = createVRLibrary();
+        mVRLibrary = createSharkLibrary();
 
         final List<View> hotspotPoints = new LinkedList<>();
         hotspotPoints.add(findViewById(R.id.hotspot_point1));
@@ -133,7 +133,7 @@ public abstract class SharkPlayerActivity extends Activity {
                 .setClickHandler(new SpinnerHelper.ClickHandler() {
                     @Override
                     public void onSpinnerClicked(int index, int key, String value) {
-                        mVRLibrary.switchDisplayMode(SharkPlayerActivity.this, key);
+                        mVRLibrary.switchDisplayMode(SharkBasePlayActivity.this, key);
                         int i = 0;
                         for (View point : hotspotPoints) {
                             point.setVisibility(i < mVRLibrary.getScreenSize() ? View.VISIBLE : View.GONE);
@@ -149,7 +149,7 @@ public abstract class SharkPlayerActivity extends Activity {
                 .setClickHandler(new SpinnerHelper.ClickHandler() {
                     @Override
                     public void onSpinnerClicked(int index, int key, String value) {
-                        mVRLibrary.switchInteractiveMode(SharkPlayerActivity.this, key);
+                        mVRLibrary.switchInteractiveMode(SharkBasePlayActivity.this, key);
                     }
                 })
                 .init(R.id.spinner_interactive);
@@ -160,7 +160,7 @@ public abstract class SharkPlayerActivity extends Activity {
                 .setClickHandler(new SpinnerHelper.ClickHandler() {
                     @Override
                     public void onSpinnerClicked(int index, int key, String value) {
-                        mVRLibrary.switchProjectionMode(SharkPlayerActivity.this, key);
+                        mVRLibrary.switchProjectionMode(SharkBasePlayActivity.this, key);
                     }
                 })
                 .init(R.id.spinner_projection);
@@ -205,7 +205,7 @@ public abstract class SharkPlayerActivity extends Activity {
 
                 plugins.add(plugin);
                 getVRLibrary().addPlugin(plugin);
-                Toast.makeText(SharkPlayerActivity.this, "add plugin position:" + position, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SharkBasePlayActivity.this, "add plugin position:" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -226,13 +226,13 @@ public abstract class SharkPlayerActivity extends Activity {
                         .listenClick(new SharkLibrary.ITouchPickListener() {
                             @Override
                             public void onHotspotHit(ISharkHotspot hitHotspot, SharkRay ray) {
-                                Toast.makeText(SharkPlayerActivity.this, "click logo", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SharkBasePlayActivity.this, "click logo", Toast.LENGTH_SHORT).show();
                             }
                         });
                 SharkHotspotPlugin plugin = new SharkHotspotPlugin(builder);
                 plugins.add(plugin);
                 getVRLibrary().addPlugin(plugin);
-                Toast.makeText(SharkPlayerActivity.this, "add plugin logo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SharkBasePlayActivity.this, "add plugin logo", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -268,7 +268,7 @@ public abstract class SharkPlayerActivity extends Activity {
         });
     }
 
-    abstract protected SharkLibrary createVRLibrary();
+    abstract protected SharkLibrary createSharkLibrary();
 
     public SharkLibrary getVRLibrary() {
         return mVRLibrary;
